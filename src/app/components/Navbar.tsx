@@ -1,6 +1,7 @@
+"use client";
 import React, { Component } from 'react';
 import Link from 'next/link';
-import Context from "../Context";
+import Context from "../context/Context";
 
 interface NavbarState {
     showMenu: boolean;
@@ -30,12 +31,10 @@ class Navbar extends Component<{}, NavbarState> {
         return (
             <nav className="fixed top-0 w-full z-100 bg-black border-black dark:bg-black dark:border-black">
                 <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4 md:p-2">
-                    <Link href="/" passHref legacyBehavior>
-                        <a className="flex items-center">
-                            <span className="self-center text-2xl font-semibold whitespace-nowrap text-white hover:-translate-y-1 transform transition duration-300">
-                                Moonson
-                            </span>
-                        </a>
+                    <Link href="/" passHref>
+                        <span className="self-center text-2xl font-semibold whitespace-nowrap text-white hover:-translate-y-1 transform transition duration-300">
+                            Moonson
+                        </span>
                     </Link>
                     <button
                         type="button"
@@ -50,34 +49,43 @@ class Navbar extends Component<{}, NavbarState> {
                     <div className={`w-full md:block p-2 md:p-0 md:w-auto ${this.state.showMenu ? 'block' : 'hidden'}`}>
                         <ul className="flex flex-col font-medium border border-gray-100 rounded-lg md:flex-row md:space-x-8 md:border-0 dark:bg-gray-800 md:dark:bg-black dark:border-gray-700">
                             <li>
-                                <Link href="/products" passHref legacyBehavior>
-                                    <a className="block p-4 text-white md:bg-transparent md:text-white hover:bg-gray-800 rounded-full">Products</a>
+                                <Link href="/products" passHref>
+                                    <span className="block p-4 text-white md:bg-transparent md:text-white hover:bg-gray-800 rounded-full">
+                                        Products
+                                    </span>
                                 </Link>
                             </li>
                             {user && user.accessLevel < 1 && (
                                 <li>
-                                    <Link href="/add-product" passHref legacyBehavior>
-                                        <a className="block p-4 text-white md:bg-transparent md:text-white hover:bg-gray-800 rounded-full">Add Product</a>
+                                    <Link href="/add-product" passHref>
+                                        <span className="block p-4 text-white md:bg-transparent md:text-white hover:bg-gray-800 rounded-full">
+                                            Add Product
+                                        </span>
                                     </Link>
                                 </li>
                             )}
                             <li>
-                                <Link href="/cart" passHref legacyBehavior>
-                                    <a className="block p-4 text-white md:bg-transparent md:text-white hover:bg-gray-800 rounded-full">Cart
+                                <Link href="/cart" passHref>
+                                    <span className="block p-4 text-white md:bg-transparent md:text-white hover:bg-gray-800 rounded-full">
+                                        Cart
                                         <span className="inline-block bg-gray-800 rounded-full px-2 text-white">{Object.keys(cart).length}</span>
-                                    </a>
+                                    </span>
                                 </Link>
                             </li>
                             {!user ? (
                                 <li>
-                                    <Link href="/login" passHref legacyBehavior>
-                                        <a className="block p-4 text-white md:bg-transparent md:text-white hover:bg-gray-800 rounded-full">Login</a>
+                                    <Link href="/login" passHref>
+                                        <span className="block p-4 text-white md:bg-transparent md:text-white hover:bg-gray-800 rounded-full">
+                                            Login
+                                        </span>
                                     </Link>
                                 </li>
                             ) : (
                                 <li>
-                                    <Link href="/" passHref legacyBehavior>
-                                        <a onClick={logout} className="block p-4 text-white md:bg-transparent md:text-white hover:bg-gray-800 rounded-full">Logout</a>
+                                    <Link href="/" passHref>
+                                        <span className="block p-4 text-white md:bg-transparent md:text-white hover:bg-gray-800 rounded-full" onClick={logout}>
+                                            Logout
+                                        </span>
                                     </Link>
                                 </li>
                             )}
