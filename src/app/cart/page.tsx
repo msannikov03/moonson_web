@@ -10,7 +10,7 @@ export default function Cart() {
   const { cartItems, removeFromCart, updateQuantity } = useCart()
   const [isProcessing, setIsProcessing] = useState(false)
 
-  const totalPrice = cartItems.reduce((total, item) => total + item.quantity * 29.99, 0)
+  const totalPrice = cartItems.reduce((total, item) => total + item.quantity * 3400, 0)
 
   const handleCheckout = async () => {
     setIsProcessing(true)
@@ -30,13 +30,13 @@ export default function Cart() {
       >
         <Link href="/" className="flex items-center text-gray-700 hover:text-gray-900">
           <ArrowLeft className="w-5 h-5 mr-2" />
-          Back to Shop
+          Обратно в магазин
         </Link>
-        <h1 className="text-2xl font-bold">Your Cart</h1>
+        <h1 className="text-2xl font-bold">Ваша Корзина</h1>
       </motion.header>
       <main className="container mx-auto px-4 py-12">
         {cartItems.length === 0 ? (
-          <p className="text-center text-xl">Your cart is empty. Start overthinking your purchases!</p>
+          <p className="text-center text-xl">Ваша корзина пуста. Переосмыслите ваши покупки!</p>
         ) : (
           <div className="grid gap-8 md:grid-cols-3">
             <div className="md:col-span-2">
@@ -49,8 +49,8 @@ export default function Cart() {
                   className="flex items-center justify-between border-b border-gray-200 py-4"
                 >
                   <div>
-                    <h3 className="font-bold">Overthinker&apos;s Delight T-Shirt</h3>
-                    <p className="text-gray-600">Color: {item.color}, Size: {item.size}</p>
+                    <h3 className="font-bold">Футболка Overthinker&apos;s Delight T-Shirt</h3>
+                    <p className="text-gray-600">Цвет: {item.color}, Размер: {item.size}</p>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2">
@@ -68,7 +68,7 @@ export default function Cart() {
                         +
                       </button>
                     </div>
-                    <p className="font-bold">${(item.quantity * 29.99).toFixed(2)}</p>
+                    <p className="font-bold">₽{(item.quantity * 3400).toFixed(2)}</p>
                     <button
                       onClick={() => removeFromCart(index)}
                       className="text-red-500 hover:text-red-700 transition-colors duration-200"
@@ -87,25 +87,25 @@ export default function Cart() {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="bg-gray-100 p-6 rounded-lg"
               >
-                <h2 className="text-2xl font-bold mb-4">Order Summary</h2>
+                <h2 className="text-2xl font-bold mb-4">Ваш Заказ</h2>
                 <div className="flex justify-between mb-2">
-                  <span>Subtotal:</span>
-                  <span>${totalPrice.toFixed(2)}</span>
+                  <span>Суммарно:</span>
+                  <span>₽{totalPrice.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between mb-4">
-                  <span>Shipping:</span>
-                  <span>Free</span>
+                  <span>Доставка:</span>
+                  <span>Высчитывается позже</span>
                 </div>
                 <div className="flex justify-between text-xl font-bold">
-                  <span>Total:</span>
-                  <span>${totalPrice.toFixed(2)}</span>
+                  <span>Сумма:</span>
+                  <span>₽{totalPrice.toFixed(2)}</span>
                 </div>
                 <button
                   onClick={handleCheckout}
                   disabled={isProcessing}
                   className="w-full mt-6 px-6 py-3 text-lg font-medium text-white bg-gray-900 rounded-full hover:bg-gray-700 transition-colors duration-300 disabled:bg-gray-400"
                 >
-                  {isProcessing ? 'Processing...' : 'Proceed to Checkout'}
+                  {isProcessing ? 'Обработка..' : 'Перейти к оформлению'}
                 </button>
               </motion.div>
             </div>

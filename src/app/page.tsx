@@ -1,55 +1,58 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { Brain, ShoppingCart } from 'lucide-react'
-import Link from 'next/link'
-import { useCart } from '../contexts/CartContext'
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Brain, ShoppingCart } from "lucide-react";
+import Link from "next/link";
+import { useCart } from "../contexts/CartContext";
 
 export default function Home() {
-  const [isLoaded, setIsLoaded] = useState(false)
-  const [color, setColor] = useState('black')
-  const [size, setSize] = useState('M')
-  const [quantity, setQuantity] = useState(1)
-  const { addToCart, cartItems } = useCart()
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [color, setColor] = useState("black");
+  const [size, setSize] = useState("M");
+  const [quantity, setQuantity] = useState(1);
+  const { addToCart, cartItems } = useCart();
 
   useEffect(() => {
-    setIsLoaded(true)
-  }, [])
+    setIsLoaded(true);
+  }, []);
 
   const features = [
     {
-      title: "Thought-Provoking Design",
-      description: "Each shirt features a unique, mind-bending graphic that's guaranteed to start conversations – mostly with yourself.",
-      image: "./images/logo.jpg"
+      title: "Дизайн, наводящий на мысли...",
+      description:
+        "Дизайн для каждой футболки был отрисован вручную известным дизайнером. Идея дизайна - корабль Тесея.",
+      image: "./images/logo.png",
     },
     {
-      title: "Premium Overthinking Material",
-      description: "Made from 100% organic cotton, providing the perfect blend of comfort and existential crisis.",
-      image: "./images/logo.jpg"
+      title: "Индивидуальный дизайн",
+      description:
+        "Каждая футболка имеет индивидуальный и рисунок на обратной стороне, вы никогда не найдете такую же.",
+      image: "./images/logo.png",
     },
     {
-      title: "Paradoxical Comfort",
-      description: "The more you overthink about how comfortable this shirt is, the more comfortable it becomes.",
-      image: "./images/logo.jpg"
-    }
-  ]
+      title: "Парадоксальный комфорт",
+      description:
+        "Чем больше вы думаете о том, насколько удобна эта футболка, тем удобнее она становится.",
+      image: "./images/logo.png",
+    },
+  ];
 
   const handleAddToCart = () => {
-    addToCart({ color, size, quantity })
-  }
+    addToCart({ color, size, quantity});
+  };
 
   const handleColorChange = (newColor: string) => {
-    setColor(newColor)
-  }
+    setColor(newColor);
+  };
 
   const handleSizeChange = (newSize: string) => {
-    setSize(newSize)
-  }
+    setSize(newSize);
+  };
 
   const handleQuantityChange = (change: number) => {
-    setQuantity(prevQuantity => Math.max(1, prevQuantity + change))
-  }
+    setQuantity((prevQuantity) => Math.max(1, prevQuantity + change));
+  };
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
@@ -59,9 +62,9 @@ export default function Home() {
         transition={{ duration: 0.5, delay: 0.2 }}
         className="p-4 flex justify-between items-center bg-gray-100"
       >
-        <h1 className="text-2xl font-bold">Moonson</h1>
+        <h1 className="text-2xl font-bold">Mont Noir</h1>
         <div className="flex items-center gap-4">
-          <img src="./images/logo.jpg" alt="Moonson" className="w-8 h-8" />
+          <img src="./images/logo.png" alt="Mont Noir" className="w-12 h-8" />
           <Link href="/cart" className="relative">
             <ShoppingCart className="w-6 h-6 text-gray-700" />
             {cartItems.length > 0 && (
@@ -79,8 +82,12 @@ export default function Home() {
           transition={{ duration: 0.5, delay: 0.5 }}
           className="text-center mb-12"
         >
-          <h2 className="text-4xl md:text-6xl font-extrabold mb-4">Wear Your Thoughts</h2>
-          <p className="text-xl md:text-2xl text-gray-600">Because simple ideas are just too mainstream</p>
+          <h2 className="text-4xl md:text-6xl font-extrabold mb-4">
+            Носи свои мысли
+          </h2>
+          <p className="text-xl md:text-2xl text-gray-600">
+            Восторг для тех, кто много думает о многом
+          </p>
         </motion.div>
         <div className="flex flex-col md:flex-row items-start justify-center gap-12 mb-16">
           <div className="flex flex-col items-center md:items-start gap-8 w-full md:w-auto">
@@ -92,7 +99,7 @@ export default function Home() {
             >
               <div className="w-64 h-64 md:w-80 md:h-80 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
                 <motion.img
-                  src="./images/logo.jpg"
+                  src="./images/logo.png"
                   alt="Overthinking T-Shirt"
                   className="w-48 h-48 md:w-64 md:h-64 object-cover"
                   initial={{ scale: 0.8, rotate: -10 }}
@@ -106,7 +113,7 @@ export default function Home() {
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.3, delay: 1.5 }}
               >
-                New!
+                Новая коллекция!
               </motion.div>
             </motion.div>
             <motion.div
@@ -115,16 +122,15 @@ export default function Home() {
               transition={{ duration: 0.5, delay: 1 }}
               className="bg-gray-100 p-6 rounded-lg w-full max-w-md"
             >
-              <h4 className="font-bold text-xl mb-4">Perks of this T-shirt:</h4>
+              <h4 className="font-bold text-xl mb-4">Главные фишки:</h4>
               <ul className="list-disc list-inside text-gray-700 space-y-2">
-                <li>Increases your daily existential crises by 200%</li>
-                <li>Doubles as a conversation starter and ender</li>
-                <li>Comes with a free mental workout every time you wear it</li>
-                <li>Scientifically proven to make decisions harder</li>
-                <li>Enhances your ability to find problems in solutions</li>
-                <li>Guaranteed to make simple tasks complex</li>
-                <li>Boosts your capacity to create imaginary scenarios</li>
-                <li>Comes with a built-in excuse generator for social events</li>
+                <li>+20 к экзистенциальному кризису</li>
+                <li>День мозга каждый раз когда вы ее надеваете</li>
+                <li>Научно доказано, что делает принятие решений сложнее</li>
+                <li>Улучшает вашу способность находить проблемы, для которых придумываете гениальные решения</li>
+                <li>Гарантированно делает простые задачи сложными</li>
+                <li>Повышает вашу способность создавать воображаемые сценарии</li>
+                <li>Поставляется со встроенным генератором оправданий для общественных мероприятий</li>
               </ul>
             </motion.div>
           </div>
@@ -134,22 +140,34 @@ export default function Home() {
             transition={{ duration: 0.5, delay: 1 }}
             className="max-w-md w-full"
           >
-            <h3 className="text-3xl font-bold mb-4">The Overthinker&apos;s Delight</h3>
+            <h3 className="text-3xl font-bold mb-4">
+              Для любителей переосмыслений
+            </h3>
             <p className="text-lg mb-6">
-              Dive into the depths of your psyche with our latest design. This shirt doesn&apos;t just make a statement;
-              it starts a whole internal dialogue.
+              Погрузитесь в глубины своей психики с нашим последним дизайном.
+              Эта футболка не просто заявляет о себе; она запускает целый
+              внутренний диалог о том, кто ты на самом деле.</p>
+            <p className="text-lg mb-6">  
+              95% хлопок, 5% лайкра
+            </p>
+            <p className="text-lg mb-6">  
+              Сделано в России
             </p>
             <div className="mb-6">
               <h4 className="font-bold mb-2">Color:</h4>
               <div className="flex gap-4">
                 <button
-                  onClick={() => handleColorChange('black')}
-                  className={`w-8 h-8 rounded-full ${color === 'black' ? 'ring-2 ring-gray-500' : ''} bg-black`}
+                  onClick={() => handleColorChange("black")}
+                  className={`w-8 h-8 rounded-full ${
+                    color === "black" ? "ring-2 ring-gray-500" : ""
+                  } bg-black`}
                   aria-label="Black"
                 />
                 <button
-                  onClick={() => handleColorChange('white')}
-                  className={`w-8 h-8 rounded-full ${color === 'white' ? 'ring-2 ring-gray-500' : ''} bg-white border border-gray-300`}
+                  onClick={() => handleColorChange("white")}
+                  className={`w-8 h-8 rounded-full ${
+                    color === "white" ? "ring-2 ring-gray-500" : ""
+                  } bg-white border border-gray-300`}
                   aria-label="White"
                 />
               </div>
@@ -157,14 +175,14 @@ export default function Home() {
             <div className="mb-6">
               <h4 className="font-bold mb-2">Size:</h4>
               <div className="flex gap-4">
-                {['S', 'M', 'L', 'XL'].map((s) => (
+                {["S", "M", "L", "XL"].map((s) => (
                   <button
                     key={s}
                     onClick={() => handleSizeChange(s)}
                     className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${
                       size === s
-                        ? 'bg-gray-800 text-white'
-                        : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                        ? "bg-gray-800 text-white"
+                        : "bg-gray-200 text-gray-800 hover:bg-gray-300"
                     }`}
                   >
                     {s}
@@ -181,7 +199,9 @@ export default function Home() {
                 >
                   -
                 </button>
-                <span className="text-xl font-medium w-8 text-center">{quantity}</span>
+                <span className="text-xl font-medium w-8 text-center">
+                  {quantity}
+                </span>
                 <button
                   onClick={() => handleQuantityChange(1)}
                   className="px-3 py-1 rounded-full bg-gray-200 text-gray-800 hover:bg-gray-300 transition-colors duration-200"
@@ -194,7 +214,7 @@ export default function Home() {
               onClick={handleAddToCart}
               className="group inline-flex items-center justify-center px-8 py-3 w-full text-lg font-medium text-white bg-gray-900 rounded-full hover:bg-gray-700 transition-colors duration-300"
             >
-              Overthink This Purchase
+              Переосмылить эту покупку
               <ShoppingCart className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
             </button>
           </motion.div>
@@ -208,7 +228,11 @@ export default function Home() {
               transition={{ duration: 0.5, delay: 1.5 + index * 0.2 }}
               className="bg-gray-100 rounded-lg overflow-hidden"
             >
-              <img src={feature.image} alt={feature.title} className="w-full h-48 object-cover" />
+              <img
+                src={feature.image}
+                alt={feature.title}
+                className="w-full h-48 object-cover"
+              />
               <div className="p-4">
                 <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
                 <p className="text-gray-600">{feature.description}</p>
@@ -217,8 +241,22 @@ export default function Home() {
           ))}
         </div>
         <div className="text-center">
-          <Link href="/privacy-policy" className="text-gray-600 hover:text-gray-900 mr-4">Privacy Policy</Link>
-          <Link href="/terms-conditions" className="text-gray-600 hover:text-gray-900">Terms & Conditions</Link>
+          <a
+            href="/policy.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-600 hover:text-gray-900 underline mr-4"
+          >
+            Политика Конфиденциальности
+          </a>
+          <a
+            href="/oferta.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-600 hover:text-gray-900 underline"
+          >
+            Оферта
+          </a>
         </div>
       </main>
       <motion.footer
@@ -227,8 +265,13 @@ export default function Home() {
         transition={{ duration: 0.5, delay: 1.5 }}
         className="text-center py-8 bg-gray-100 text-gray-700"
       >
-        <p>&copy; 2023 Moonson. All rights reserved. Or are they?</p>
+        <p>&copy; 2024 Mont Noir. Все права защищены. Или нет?</p>
+        <img
+          src="./images/tbank.png"
+          alt="Т-Банк"
+          className="w-23 h-9 mx-auto mt-4"
+        />
       </motion.footer>
     </div>
-  )
+  );
 }

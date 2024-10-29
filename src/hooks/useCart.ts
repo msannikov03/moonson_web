@@ -46,5 +46,10 @@ export function useCart() {
     })
   }
 
-  return { cartItems, addToCart, removeFromCart, updateQuantity }
+  const clearCart = () => {
+    setCartItems([])
+    localStorage.removeItem('cart')
+  }
+
+  return { cartItems, addToCart, removeFromCart, updateQuantity, clearCart }
 }
