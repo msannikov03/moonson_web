@@ -5,9 +5,14 @@ import Providers from '../components/Providers'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  title: 'Moonson - Wear Your Thoughts',
-  description: 'Overthink your fashion choices with Moonson t-shirts.',
-}
+  title: 'Your App Title',
+  description: 'Your App Description',
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
+};
 
 export default function RootLayout({
   children,
