@@ -38,8 +38,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
         i => i.color === item.color && i.size === item.size
       )
       if (existingItemIndex > -1) {
-        const updatedItems = [...prevItems]
-        updatedItems[existingItemIndex].quantity += item.quantity
+        const updatedItems = prevItems.map((cartItem, index) =>
+          index === existingItemIndex
+            ? { ...cartItem, quantity: cartItem.quantity + item.quantity }
+            : cartItem
+        )
         return updatedItems
       }
       return [...prevItems, item]
@@ -51,11 +54,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }
 
   const updateQuantity = (index: number, newQuantity: number) => {
-    setCartItems(prevItems => {
-      const updatedItems = [...prevItems]
-      updatedItems[index].quantity = newQuantity
-      return updatedItems
-    })
+    setCartItems(prevItems =>
+      prevItems.map((cartItem, i) =>
+        i === index ? { ...cartItem, quantity: newQuantity } : cartItem
+      )
+    )
   }
 
   const clearCart = () => {

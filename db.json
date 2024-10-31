@@ -1,0 +1,12 @@
+{
+    "inventory": [
+      { "color": "black", "size": "S", "quantity": 0 },
+      { "color": "black", "size": "M", "quantity": 15 },
+      { "color": "black", "size": "L", "quantity": 20 },
+      { "color": "black", "size": "XL", "quantity": 5 },
+      { "color": "white", "size": "S", "quantity": 8 },
+      { "color": "white", "size": "M", "quantity": 12 },
+      { "color": "white", "size": "L", "quantity": 10 },
+      { "color": "white", "size": "XL", "quantity": 4 }
+    ]
+  }
