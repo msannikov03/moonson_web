@@ -49,9 +49,9 @@ export default function Home() {
 
   const features = [
     {
-      title: "Дизайн, наводящий на мысли...",
+      title: "Качество в каждой детали",
       description:
-        "Дизайн для каждой футболки был отрисован вручную известным дизайнером. Идея дизайна - корабль Тесея.",
+        "Плохая оболочка убивает содержимое. Продукт поставляется в дизайнерских коробках, сочетающих элегантность и функциональность.",
       image: "./images/box.jpg",
       yShift: -95,
     },
@@ -119,7 +119,7 @@ export default function Home() {
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
-        className="p-4 flex justify-between items-center bg-gray-100"
+        className="fixed top-0 left-0 right-0 z-50 p-4 flex justify-between items-center bg-gray-100"
       >
         <h1 className="text-2xl font-bold">Mont Noir</h1>
         <div className="flex items-center gap-4">
@@ -135,7 +135,7 @@ export default function Home() {
         </div>
       </motion.header>
 
-      <main className="container mx-auto px-4 py-12">
+      <main className="container mx-auto px-4 py-12 pt-24">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -216,6 +216,7 @@ export default function Home() {
             </p>
             <p className="text-lg mb-6">95% хлопок, 5% лайкра</p>
             <p className="text-lg mb-6">Сделано в России</p>
+            <p className="text-lg mb-6">Доставка от 3 рабочих дней</p>
             <div className="mb-6">
               <h4 className="font-bold mb-2">Color:</h4>
               <div className="flex gap-4">

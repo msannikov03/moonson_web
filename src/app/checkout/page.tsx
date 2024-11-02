@@ -40,17 +40,17 @@ export default function Checkout() {
     setIsProcessing(true);
 
     try {
-      const response = await fetch('/api/update-inventory', {
-        method: 'POST',
+      const response = await fetch("/api/update-inventory", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ cartItems }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to update inventory');
+        throw new Error(errorData.error || "Failed to update inventory");
       }
       clearCart();
       router.push("/order-confirmation");
@@ -68,7 +68,7 @@ export default function Checkout() {
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="p-4 bg-white shadow-sm"
+        className="fixed top-0 left-0 right-0 z-50 p-4 bg-white shadow-sm"
       >
         <div className="container mx-auto flex justify-between items-center">
           <Link
@@ -78,10 +78,12 @@ export default function Checkout() {
             <ArrowLeft className="w-5 h-5 mr-2" />
             Обратно в корзину
           </Link>
-          <h1 className="text-2xl font-bold text-gray-900">Оформление заказа</h1>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Оформление заказа
+          </h1>
         </div>
       </motion.header>
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 pt-24">
         <div className="max-w-4xl mx-auto grid md:grid-cols-5 gap-8">
           <div className="md:col-span-3">
             <Card>
@@ -174,8 +176,6 @@ export default function Checkout() {
               </CardContent>
             </Card>
           </div>
-
-          {/* Order Summary */}
           <div className="md:col-span-2">
             <Card>
               <CardHeader>
@@ -189,8 +189,8 @@ export default function Checkout() {
                       className="flex justify-between items-center text-sm"
                     >
                       <span>
-                        {item.quantity}x Overthinker's Delight T-Shirt ({item.color},{" "}
-                        {item.size})
+                        {item.quantity}x Overthinker&apos;s Delight T-Shirt (
+                        {item.color}, {item.size})
                       </span>
                       <span>₽{(item.quantity * 3400).toFixed(2)}</span>
                     </div>
@@ -204,7 +204,7 @@ export default function Checkout() {
                   <div className="flex justify-between items-center text-sm">
                     <span>Доставка:</span>
                     <span>
-                      ₽{shippingMethod === "express" ? "500.00" : "400.00"}
+                      ₽{shippingMethod === "express" ? "400.00" : "500.00"}
                     </span>
                   </div>
                   <div className="flex justify-between items-center font-bold text-lg">

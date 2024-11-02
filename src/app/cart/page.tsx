@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import Link from 'next/link';
-import { useCart } from '../../contexts/CartContext';
-import { ArrowLeft, Trash2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { InventoryItem } from '../../lib/db';
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { useCart } from "../../contexts/CartContext";
+import { ArrowLeft, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { InventoryItem } from "../../lib/db";
 
 export default function Cart() {
   const { cartItems, removeFromCart, updateQuantity } = useCart();
@@ -16,13 +16,13 @@ export default function Cart() {
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
 
   useEffect(() => {
-    fetch('/api/inventory')
+    fetch("/api/inventory")
       .then((res) => res.json())
       .then((data) => {
         setInventory(data);
       })
       .catch((error) => {
-        console.error('Error fetching inventory:', error);
+        console.error("Error fetching inventory:", error);
       });
   }, []);
 
@@ -35,7 +35,7 @@ export default function Cart() {
     setIsProcessing(true);
     await new Promise((resolve) => setTimeout(resolve, 2000));
     setIsProcessing(false);
-    router.push('/checkout');
+    router.push("/checkout");
   };
 
   return (
@@ -44,7 +44,7 @@ export default function Cart() {
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="p-4 flex justify-between items-center bg-gray-100"
+        className="fixed top-0 left-0 right-0 z-50 p-4 flex justify-between items-center bg-gray-100"
       >
         <Link
           href="/"
@@ -55,7 +55,7 @@ export default function Cart() {
         </Link>
         <h1 className="text-2xl font-bold">Ваша Корзина</h1>
       </motion.header>
-      <main className="container mx-auto px-4 py-12">
+      <main className="container mx-auto px-4 py-12 pt-24">
         {cartItems.length === 0 ? (
           <p className="text-center text-xl">
             Ваша корзина пуста. Переосмыслите ваши покупки!
@@ -82,7 +82,7 @@ export default function Cart() {
                   >
                     <div>
                       <h3 className="font-bold">
-                        Футболка Overthinker's Delight T-Shirt
+                        Футболка Overthinker&apos;s Delight T-Shirt
                       </h3>
                       <p className="text-gray-600">
                         Цвет: {item.color}, Размер: {item.size}
@@ -160,7 +160,7 @@ export default function Cart() {
                   disabled={isProcessing}
                   className="w-full mt-6 px-6 py-3 text-lg font-medium text-white bg-gray-900 rounded-full hover:bg-gray-700 transition-colors duration-300 disabled:bg-gray-400"
                 >
-                  {isProcessing ? 'Обработка...' : 'Перейти к оформлению'}
+                  {isProcessing ? "Обработка..." : "Перейти к оформлению"}
                 </button>
               </motion.div>
             </div>
