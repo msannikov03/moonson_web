@@ -115,6 +115,7 @@ export default function Checkout() {
         let itemName: string;
         let paymentObject: string;
         let tax: string;
+        let measurementUnit: string;
 
         if ("name" in item) {
           priceInKopeks = Math.round(item.price * 100);
@@ -122,6 +123,7 @@ export default function Checkout() {
           itemName = item.name;
           paymentObject = "service";
           tax = "none";
+          measurementUnit = "шт";
         } else {
           const productPrice = 3400;
           priceInKopeks = Math.round(productPrice * 100);
@@ -129,6 +131,7 @@ export default function Checkout() {
           itemName = `Overthinker's Delight T-Shirt (${item.color}, ${item.size})`;
           paymentObject = "commodity";
           tax = "none";
+          measurementUnit = "шт";
         }
 
         return {
@@ -139,6 +142,7 @@ export default function Checkout() {
           PaymentMethod: "full_prepayment",
           PaymentObject: paymentObject,
           Tax: tax,
+          MeasurementUnit: measurementUnit,
         };
       });
 
@@ -149,22 +153,14 @@ export default function Checkout() {
 
       const totalAmountInRubles = totalAmountInKopeks / 100;
 
-      const receipt = {
-        Email: email,
-        Phone: phone,
+      const Receipt = {
         EmailCompany: "support@montnoir.ru",
         Taxation: "usn_income_outcome",
         FfdVersion: "1.2",
         Items: items,
-        Customer: {
-          Contact: fullName,
-          DeliveryInfo: {
-            Address: address,
-          },
-        },
       };
 
-      const receiptJson = JSON.stringify(receipt);
+      const receiptJson = JSON.stringify(Receipt);
 
       const TPF = {
         terminalkey: "1730402391966DEMO",
@@ -176,9 +172,7 @@ export default function Checkout() {
         name: fullName,
         email: email,
         phone: phone,
-        Receipt: encodeURIComponent(receiptJson),
-        successurl: "https://montnoir.ru/confirmation",
-        failurl: "https://montnoir.ru/not-found",
+        receipt: receiptJson,
       };
 
       // Validate amounts
@@ -189,6 +183,7 @@ export default function Checkout() {
       }
 
       const form = document.createElement("form");
+      form.id = "payform-tbank"; 
 
       Object.entries(TPF).forEach(([key, value]) => {
         const input = document.createElement("input");
@@ -199,6 +194,7 @@ export default function Checkout() {
       });
 
       document.body.appendChild(form);
+      console.log(form);
       window.pay(form);
     } catch (error: any) {
       alert("There was an error processing your payment: " + error.message);
@@ -358,7 +354,7 @@ export default function Checkout() {
                       className="flex justify-between items-center text-sm"
                     >
                       <span>
-                        {item.quantity}x Overthinker's Delight T-Shirt (
+                        {item.quantity}x Overthinker&apos;s Delight T-Shirt (
                         {item.color}, {item.size})
                       </span>
                       <span>₽{(item.quantity * 3400).toFixed(2)}</span>

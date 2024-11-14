@@ -8,5 +8,22 @@
       { "color": "white", "size": "M", "quantity": 15 },
       { "color": "white", "size": "L", "quantity": 25 },
       { "color": "white", "size": "XL", "quantity": 13 }
-    ]
+    ],
+    "promocodes": [
+    {
+      "code": "SAVE10",
+      "discountPercent": 10,
+      "active": true
+    },
+    {
+      "code": "WELCOME20",
+      "discountPercent": 20,
+      "active": true
+    },
+    {
+      "code": "SUMMER15",
+      "discountPercent": 15,
+      "active": false
+    }
+  ]
   }
