@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useRouter } from "next/navigation";
-import { useCart } from "../../contexts/CartContext";
+import { useCart } from "@/contexts/CartContext";
 import { ArrowLeft, Truck, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -58,27 +58,128 @@ export default function Checkout() {
   const [address, setAddress] = useState("");
   const [payLoaded, setPayLoaded] = useState(false);
 
+  const [promoCodes, setPromoCodes] = useState<string[]>([]);
+  const [currentPromoCode, setCurrentPromoCode] = useState("");
+  const [discount, setDiscount] = useState(0);
+  const [freeShipping, setFreeShipping] = useState(false);
+  const [promoError, setPromoError] = useState("");
+
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://securepay.tinkoff.ru/html/payForm/js/tinkoff_v2.js";
+    script.async = true;
     script.onload = () => {
       setPayLoaded(true);
     };
     script.onerror = () => {
-      console.error("Failed to load payment script");
+      console.error("Не удалось загрузить скрипт оплаты");
     };
     document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
   }, []);
 
   useEffect(() => {
-    const shippingCost = shippingMethod === "spb" ? 400 : 500;
+    const shippingCost = freeShipping
+      ? 0
+      : shippingMethod === "spb"
+      ? 400
+      : 500;
     const calculatedSubtotal = cartItems.reduce(
       (total, item) => total + item.quantity * 3400,
       0
     );
+
+    const calculatedDiscount = (calculatedSubtotal * discount) / 100;
+    const newTotalPrice = calculatedSubtotal - calculatedDiscount + shippingCost;
+
     setSubtotal(calculatedSubtotal);
-    setTotalPrice(calculatedSubtotal + shippingCost);
-  }, [cartItems, shippingMethod]);
+    setTotalPrice(newTotalPrice);
+  }, [cartItems, shippingMethod, discount, freeShipping]);
+
+  const handleApplyPromo = async () => {
+    const code = currentPromoCode.trim();
+
+    if (!code) {
+      setPromoError("Пожалуйста, введите промокод.");
+      return;
+    }
+
+    if (promoCodes.length >= 2) {
+      setPromoError("Можно применить только два промокода.");
+      return;
+    }
+
+    if (promoCodes.includes(code.toLowerCase())) {
+      setPromoError("Этот промокод уже применен.");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/promocodes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ codes: [code] })
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.valid) {
+        setPromoCodes([...promoCodes, code.toLowerCase()]);
+        setDiscount(prev => prev + data.totalDiscountPercent);
+        if (data.freeShipping) {
+          setFreeShipping(true);
+        }
+        setPromoError("");
+        setCurrentPromoCode("");
+      } else {
+        setPromoError(data.message || "Неверный промокод.");
+      }
+    } catch (error: any) {
+      console.error("Ошибка при применении промокода:", error);
+      setPromoError("Произошла ошибка при применении промокода.");
+    }
+  };
+
+  const handleRemovePromoCode = async (codeToRemove: string) => {
+    const updatedPromoCodes = promoCodes.filter(code => code !== codeToRemove.toLowerCase());
+    setPromoCodes(updatedPromoCodes);
+
+    if (updatedPromoCodes.length === 0) {
+      setDiscount(0);
+      setFreeShipping(false);
+      setPromoError("");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/promocodes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ codes: updatedPromoCodes })
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.valid) {
+        const totalDiscount = data.totalDiscountPercent;
+        setDiscount(totalDiscount);
+        setFreeShipping(data.freeShipping);
+        setPromoError("");
+      } else {
+        setPromoError(data.message || "Ошибка при обновлении промокодов.");
+      }
+    } catch (error: any) {
+      console.error("Ошибка при обновлении промокодов:", error);
+      setPromoError("Произошла ошибка при обновлении промокодов.");
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -86,14 +187,20 @@ export default function Checkout() {
 
     try {
       if (!payLoaded || typeof window.pay !== "function") {
-        alert("Payment script not loaded. Please try again later.");
+        alert("Скрипт оплаты не загружен. Пожалуйста, попробуйте позже.");
         setIsProcessing(false);
         return;
       }
 
       const orderNumber = "Order" + Date.now();
       const fullName = `${firstName} ${lastName}`;
-      const shippingCost = shippingMethod === "spb" ? 400 : 500;
+      const shippingCost = freeShipping
+        ? 0
+        : shippingMethod === "spb"
+        ? 400
+        : 500;
+      const calculatedDiscount = (subtotal * discount) / 100;
+      const discountedSubtotal = subtotal - calculatedDiscount;
 
       const cartItemsWithShipping: CartItemWithShipping[] = [
         ...cartItems,
@@ -103,8 +210,8 @@ export default function Checkout() {
           quantity: 1,
           name:
             shippingMethod === "spb"
-              ? "Shipping to SPB and Leningrad Region"
-              : "Shipping within Russia",
+              ? "Доставка по СПБ и Ленинградской области"
+              : "Доставка по России",
           price: shippingCost,
         },
       ];
@@ -125,7 +232,7 @@ export default function Checkout() {
           tax = "none";
           measurementUnit = "шт";
         } else {
-          const productPrice = 3400;
+          const productPrice = 3400 * (1 - discount / 100);
           priceInKopeks = Math.round(productPrice * 100);
           amountInKopeks = priceInKopeks * item.quantity;
           itemName = `Overthinker's Delight T-Shirt (${item.color}, ${item.size})`;
@@ -146,12 +253,9 @@ export default function Checkout() {
         };
       });
 
-      const totalAmountInKopeks = items.reduce(
-        (sum, item) => sum + parseInt(item.Amount),
-        0
+      const totalAmountInKopeks = Math.round(
+        (discountedSubtotal + shippingCost) * 100
       );
-
-      const totalAmountInRubles = totalAmountInKopeks / 100;
 
       const Receipt = {
         EmailCompany: "support@montnoir.ru",
@@ -163,10 +267,10 @@ export default function Checkout() {
       const receiptJson = JSON.stringify(Receipt);
 
       const TPF = {
-        terminalkey: "1730402391966DEMO",
+        terminalkey: process.env.NEXT_PUBLIC_TINKOFF_TERMINAL_KEY || "",
         frame: "false",
         language: "ru",
-        amount: totalAmountInRubles.toFixed(2),
+        amount: (totalAmountInKopeks / 100).toFixed(2),
         order: orderNumber,
         description: "Оплата заказа",
         name: fullName,
@@ -175,15 +279,16 @@ export default function Checkout() {
         receipt: receiptJson,
       };
 
-      // Validate amounts
-      if (parseFloat(TPF.amount) !== totalAmountInRubles) {
-        alert("There was an error processing your payment. Please try again.");
+      const parsedAmount = parseFloat(TPF.amount);
+      const expectedAmount = discountedSubtotal + shippingCost;
+      if (Math.abs(parsedAmount - expectedAmount) > 0.01) {
+        alert("Произошла ошибка при обработке вашего платежа. Пожалуйста, попробуйте еще раз.");
         setIsProcessing(false);
         return;
       }
 
       const form = document.createElement("form");
-      form.id = "payform-tbank"; 
+      form.id = "payform-tbank";
 
       Object.entries(TPF).forEach(([key, value]) => {
         const input = document.createElement("input");
@@ -194,10 +299,11 @@ export default function Checkout() {
       });
 
       document.body.appendChild(form);
-      console.log(form);
+      console.log("Payment Form:", form);
       window.pay(form);
     } catch (error: any) {
-      alert("There was an error processing your payment: " + error.message);
+      alert("Произошла ошибка при обработке вашего платежа: " + error.message);
+      console.error("Ошибка платежа:", error);
     } finally {
       setIsProcessing(false);
     }
@@ -312,6 +418,66 @@ export default function Checkout() {
                       </div>
                     </RadioGroup>
                   </div>
+                  <div>
+                    <Label>Промокоды</Label>
+                    <div className="space-y-2 mt-2">
+                      <div className="flex items-center space-x-2">
+                        <Input
+                          type="text"
+                          placeholder="Введите промокод"
+                          value={currentPromoCode}
+                          onChange={(e) => setCurrentPromoCode(e.target.value)}
+                          disabled={promoCodes.length >= 2}
+                        />
+                        <Button
+                          type="button"
+                          onClick={handleApplyPromo}
+                          disabled={currentPromoCode.trim() === "" || promoCodes.length >= 2}
+                        >
+                          Применить
+                        </Button>
+                      </div>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {promoCodes.map((code, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center bg-gray-200 text-gray-800 px-3 py-1 rounded-full"
+                          >
+                            <span>{code.toUpperCase()}</span>
+                            <button
+                              type="button"
+                              onClick={() => handleRemovePromoCode(code)}
+                              className="ml-2 text-red-500 hover:text-red-700"
+                            >
+                              &times;
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                      {promoCodes.length >= 2 && (
+                        <p className="text-red-500 text-sm">
+                          Можно применить только два промокода.
+                        </p>
+                      )}
+                      {promoError && (
+                        <p className="text-red-500 text-sm">{promoError}</p>
+                      )}
+                      {(discount > 0 || freeShipping) && (
+                        <div className="mt-2">
+                          {discount > 0 && (
+                            <p className="text-green-500 text-sm">
+                              Скидка: {discount}%
+                            </p>
+                          )}
+                          {freeShipping && (
+                            <p className="text-green-500 text-sm">
+                              Бесплатная доставка
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                   <div className="mt-6">
                     <div className="flex items-center space-x-2">
                       <Checkbox
@@ -322,7 +488,15 @@ export default function Checkout() {
                         }
                       />
                       <Label htmlFor="agreeToPolicy" className="text-sm">
-                        Я согласен с Политикой Конфиденциальности
+                        Я согласен с{" "}
+                        <a
+                          href="/policy.pdf"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="underline text-black"
+                        >
+                          Политикой Конфиденциальности
+                        </a>
                       </Label>
                     </div>
                   </div>
@@ -354,7 +528,7 @@ export default function Checkout() {
                       className="flex justify-between items-center text-sm"
                     >
                       <span>
-                        {item.quantity}x Overthinker&apos;s Delight T-Shirt (
+                        {item.quantity}x Overthinker's Delight T-Shirt (
                         {item.color}, {item.size})
                       </span>
                       <span>₽{(item.quantity * 3400).toFixed(2)}</span>
@@ -363,13 +537,19 @@ export default function Checkout() {
                   <div className="flex justify-between items-center text-sm">
                     <span>
                       Доставка:{" "}
-                      {shippingMethod === "spb"
+                      {freeShipping
+                        ? "Бесплатная доставка"
+                        : shippingMethod === "spb"
                         ? "СПБ и Ленинградская область"
                         : "По России"}
                     </span>
                     <span>
                       ₽
-                      {shippingMethod === "spb" ? "400.00" : "500.00"}
+                      {freeShipping
+                        ? "0.00"
+                        : shippingMethod === "spb"
+                        ? "400.00"
+                        : "500.00"}
                     </span>
                   </div>
                 </div>
@@ -378,10 +558,21 @@ export default function Checkout() {
                     <span>Предварительная сумма:</span>
                     <span>₽{subtotal.toFixed(2)}</span>
                   </div>
+                  {discount > 0 && (
+                    <div className="flex justify-between items-center text-sm">
+                      <span>Скидка ({discount}%):</span>
+                      <span>-₽{((subtotal * discount) / 100).toFixed(2)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between items-center text-sm">
                     <span>Доставка:</span>
                     <span>
-                      ₽{shippingMethod === "spb" ? "400.00" : "500.00"}
+                      ₽
+                      {freeShipping
+                        ? "0.00"
+                        : shippingMethod === "spb"
+                        ? "400.00"
+                        : "500.00"}
                     </span>
                   </div>
                   <div className="flex justify-between items-center font-bold text-lg">
