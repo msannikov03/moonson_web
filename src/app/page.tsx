@@ -114,28 +114,37 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-gray-900">
-      <motion.header
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-        className="fixed top-0 left-0 right-0 z-50 p-4 flex justify-between items-center bg-gray-100"
-      >
-        <h1 className="text-2xl font-bold">Mont Noir</h1>
-        <div className="flex items-center gap-4">
-          <img src="./images/logo.png" alt="Mont Noir" className="w-12 h-8" />
-          <Link href="/cart" className="relative">
-            <ShoppingCart className="w-6 h-6 text-gray-700" />
-            {cartItems.length > 0 && (
-              <span className="absolute -top-2 -right-2 bg-gray-800 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                {cartItems.reduce((total, item) => total + item.quantity, 0)}
-              </span>
-            )}
-          </Link>
-        </div>
-      </motion.header>
+    <div className="min-h-screen bg-gray-900 text-white background-image">
+        <motion.header
+		  initial={{ opacity: 0, y: -50 }}
+		  animate={{ opacity: 1, y: 0 }}
+		  transition={{ duration: 0.5, delay: 0.2 }}
+		  className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center bg-gray-900"
+		  style={{ height: '80px' }} // Set a fixed height for the header
+		>
+		  <div className="flex items-center relative">
+			<div className="flex items-center">
+			  <h1 className="text-3xl font-bold text-white mr-3">Mont</h1>
+			  <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mt-8"> {/* Negative margin to protrude the logo */}
+				<img src="./images/logo.png" alt="Mont Noir" className="w-20 h-20" />
+			  </div>
+			  <h1 className="text-3xl font-bold text-white ml-3">Noir</h1>
+			</div>
+		  </div>
 
-      <main className="container mx-auto px-4 py-12 pt-24">
+		  <div className="absolute right-4 flex items-center">
+			<Link href="/cart" className="relative">
+			  <ShoppingCart className="w-12 h-12 text-gray-100" /> {/* Increased size of cart icon */}
+			  {cartItems.length > 0 && (
+				<span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+				  {cartItems.reduce((total, item) => total + item.quantity, 0)}
+				</span>
+			  )}
+			</Link>
+		  </div>
+		</motion.header>
+
+      <main className="container mx-auto px-4 py-12 pt-32">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -180,7 +189,7 @@ export default function Home() {
               transition={{ duration: 0.5, delay: 1 }}
               className="bg-gray-100 p-6 rounded-lg w-full max-w-md"
             >
-              <h4 className="font-bold text-xl mb-4">Главные фишки:</h4>
+              <h4 className="font-bold text-gray-900 text-xl mb-4">Главные фишки:</h4>
               <ul className="list-disc list-inside text-gray-700 space-y-2">
                 <li>+20 к экзистенциальному кризису</li>
                 <li>День мозга каждый раз когда вы ее надеваете</li>
