@@ -124,11 +124,11 @@ export default function Home() {
 		>
 		  <div className="flex items-center relative">
 			<div className="flex items-center">
-			  <h1 className="text-3xl font-bold text-white mr-3">Mont</h1>
-			  <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mt-8"> {/* Negative margin to protrude the logo */}
+			  <h1 className="text-3xl font-bold text-white mr-4">Mont</h1>
+			  <div className="w-24 h-24 bg-white rounded-full shadow-lg flex items-center justify-center mt-8"> {/* margin to protrude the logo */}
 				<img src="./images/logo.png" alt="Mont Noir" className="w-20 h-20" />
 			  </div>
-			  <h1 className="text-3xl font-bold text-white ml-3">Noir</h1>
+			  <h1 className="text-3xl font-bold text-white ml-4">Noir</h1>
 			</div>
 		  </div>
 
@@ -151,10 +151,10 @@ export default function Home() {
           transition={{ duration: 0.5, delay: 0.5 }}
           className="text-center mb-12"
         >
-          <h2 className="text-4xl md:text-6xl font-extrabold mb-4">
+          <h2 className="text-5xl font-extrabold mb-4">
             Носи свои мысли
           </h2>
-          <p className="text-xl md:text-2xl text-gray-600">
+          <p className="text-xl text-gray-400">
             Восторг для тех, кто много думает о многом
           </p>
         </motion.div>
@@ -344,37 +344,19 @@ export default function Home() {
             </motion.div>
           ))}
         </div>
-        <div className="text-center">
-          <a
-            href="/policy.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-600 hover:text-gray-900 underline mr-4"
-          >
-            Политика Конфиденциальности
-          </a>
-          <a
-            href="/oferta.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-600 hover:text-gray-900 underline"
-          >
-            Оферта
-          </a>
-        </div>
-        <section className="bg-gray-50 py-8 mt-8 rounded-lg shadow-inner">
+        <section className="bg-gray-1000 py-2 mt-2">
           <div className="container mx-auto px-4">
-            <h3 className="text-2xl font-semibold text-gray-800 text-center mb-4">
+            <h3 className="text-2xl font-semibold text-gray-200 text-center mb-4">
               Свяжитесь с нами
             </h3>
-            <p className="text-base text-gray-600 text-center mb-6">
+            <p className="text-base text-gray-400 text-center mb-6">
               Мы всегда готовы помочь вам! Свяжитесь с нами по электронной почте
               или через наш Telegram-бот.
             </p>
             <div className="flex flex-col md:flex-row justify-center items-center gap-6">
               <a
                 href="mailto:support@montnoir.com"
-                className="flex items-center text-gray-700 hover:text-gray-900 transition-colors duration-200"
+                className="flex items-center text-gray-100 hover:text-gray-400 transition-colors duration-200"
                 aria-label="Email support@montnoir.com"
               >
                 <MdEmail className="w-6 h-6 mr-2" />
@@ -385,7 +367,7 @@ export default function Home() {
                 href="https://t.me/MontNoirBot"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center text-gray-700 hover:text-gray-900 transition-colors duration-200"
+                className="flex items-center text-gray-100 hover:text-gray-400 transition-colors duration-200"
                 aria-label="Chat with our Telegram bot @MontNoirBot"
               >
                 <SiTelegram className="w-6 h-6 mr-2" />
@@ -399,13 +381,31 @@ export default function Home() {
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 1.5 }}
-        className="text-center py-8 bg-gray-100 text-gray-700"
+        className="text-center py-6 bg-black text-gray-700"
       >
-        <p>&copy; 2024 Mont Noir. Все права защищены. Или нет?</p>
+        <div className="text-center mb-4">
+          <a
+            href="/policy.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-700 hover:text-gray-800 underline mr-4"
+          >
+            Политика Конфиденциальности
+          </a>
+          <a
+            href="/oferta.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-700 hover:text-gray-800 underline"
+          >
+            Оферта
+          </a>
+        </div>
+        <p className="text-gray-600">&copy; 2024 Mont Noir. Все права защищены. Или нет?</p>
         <img
           src="./images/tbank.png"
           alt="Т-Банк"
-          className="w-23 h-9 mx-auto mt-4"
+          className="w-23 h-9 mx-auto mt-4 border-2 border-white bg-white rounded-lg shadow-lg"
         />
       </motion.footer>
     </div>
