@@ -338,7 +338,7 @@ export default function Home() {
                 />
               </div>
               <div className="p-4">
-                <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
+                <h3 className="text-xl text-gray-700 font-bold mb-2">{feature.title}</h3>
                 <p className="text-gray-600">{feature.description}</p>
               </div>
             </motion.div>
