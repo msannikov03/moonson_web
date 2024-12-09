@@ -15,8 +15,8 @@ export default function Home() {
   const [size, setSize] = useState("M");
   const [quantity, setQuantity] = useState(1);
   const { addToCart, cartItems } = useCart();
-
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
+  const [flipped, setFlipped] = useState(false);
 
   useEffect(() => {
     setIsLoaded(true);
@@ -30,6 +30,34 @@ export default function Home() {
         console.error("Error fetching inventory:", error);
       });
   }, []);
+
+  const handleCircleClick = () => {
+    setFlipped(!flipped);
+  };
+  
+  useEffect(() => {
+    const text = "кликни кликни кликни кликни кликни кликни ";
+    const radius = 150; // Adjust the radius as needed
+    const letters = text.split('');
+    const angle = 360 / letters.length;
+
+    const circularTextContainer = document.getElementById('circular-text');
+    circularTextContainer.innerHTML = ''; // Clear previous content
+
+    letters.forEach((letter, index) => {
+      const span = document.createElement('span');
+      span.innerText = letter;
+      span.style.position = 'absolute';
+      span.style.left = '50%';
+      span.style.top = '50%';
+      span.style.transformOrigin = '0 0';
+      const rotation = angle * index; // Calculate rotation for each letter
+      const adjustedRotation = rotation - 90; // Adjust rotation to point bottom of letter to center
+      span.style.transform = `rotate(${adjustedRotation}deg) translate(${radius}px) rotate(${90}deg)`;
+      circularTextContainer.appendChild(span);
+    });
+  }, []);
+
 
   const inventoryItem = inventory.find(
     (item) => item.color === color && item.size === size
@@ -166,22 +194,25 @@ export default function Home() {
               transition={{ duration: 0.5, delay: 0.8 }}
               className="relative"
             >
-              <div className="w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
-                <motion.img
-                  src="./images/circle.jpg"
-                  alt="Overthinking T-Shirt"
-                  className="w-full h-auto object-cover"
-                  style={{ objectPosition: "center 70px" }}
-                />
-              </div>
-              <motion.div
-                className="absolute -top-4 -right-4 bg-gray-800 text-white font-bold py-2 px-4 rounded-full transform rotate-12"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ duration: 0.3, delay: 1.5 }}
-              >
-                Новая коллекция!
-              </motion.div>
+              <div className="relative w-64 h-64">
+				<div id="circular-text"></div>
+				<div className={`circle ${flipped ? "flipped" : ""}`} onClick={handleCircleClick}>
+				  <div className="front">
+					<motion.img
+					  src="./images/circle-front.jpg"
+					  alt="Overthinking T-Shirt"
+					  className="w-full h-full object-cover rounded-full"
+					/>
+				  </div>
+				  <div className="back">
+					<motion.img
+					  src="./images/circle-back.jpg"
+					  alt="Overthinking T-Shirt"
+					  className="w-full h-full object-cover rounded-full"
+					/>
+				  </div>
+				</div>
+			  </div>
             </motion.div>
             <motion.div
               initial={{ opacity: 0, y: 50 }}
