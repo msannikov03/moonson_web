@@ -135,3 +135,83 @@ footer {
   background-color: #2c2c2c; /* Dark footer */
   color: #b0b0b0; /* Lighter footer text */
 }
+
+.circle {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    perspective: 1000px; /* Add perspective for 3D effect */
+}
+
+.front, .back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden; /* Hide the back face when flipped */
+    border-radius: 50%; /* Ensure the images are circular */
+}
+
+.front {
+    z-index: 2; /* Ensure the front is on top */
+    transition: transform 0.6s; /* Animation duration */
+}
+
+.back {
+    transform: rotateY(180deg); /* Start with the back rotated */
+    transition: transform 0.6s; /* Animation duration */
+}
+
+.flipped .front {
+    transform: rotateY(180deg); /* Flip the front */
+}
+
+.flipped .back {
+    transform: rotateY(0deg); /* Show the back */
+}
+
+.text-wrap {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  white-space: nowrap; /* Prevents text from wrapping */
+  overflow: hidden; /* Hides overflow */
+  text-overflow: ellipsis; /* Adds ellipsis for overflow text */
+}
+
+.relative {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+#circular-text {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+    animation: rotate 40s linear infinite; /* Adjust duration as needed */
+}
+
+#circular-text span {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform-origin: 0 0; /* Set the origin for rotation */
+  font-size: 16px; /* Adjust font size as needed */
+  color: white; /* Text color */
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
