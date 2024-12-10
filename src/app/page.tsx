@@ -15,8 +15,9 @@ export default function Home() {
   const [size, setSize] = useState("M");
   const [quantity, setQuantity] = useState(1);
   const { addToCart, cartItems } = useCart();
-
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
+  const [flipped, setFlipped] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
     setIsLoaded(true);
@@ -30,6 +31,38 @@ export default function Home() {
         console.error("Error fetching inventory:", error);
       });
   }, []);
+
+  const handleCircleClick = () => {
+    setFlipped(!flipped);
+  };
+  
+  const toggleExpand = () => {
+        setIsExpanded(!isExpanded);
+    };
+  
+  useEffect(() => {
+    const text = "кликни кликни кликни кликни кликни кликни кликни ";
+    const radius = 185; // Adjust the radius as needed
+    const letters = text.split('');
+    const angle = 360 / letters.length;
+
+    const circularTextContainer = document.getElementById('circular-text');
+    circularTextContainer.innerHTML = ''; // Clear previous content
+
+    letters.forEach((letter, index) => {
+      const span = document.createElement('span');
+      span.innerText = letter;
+      span.style.position = 'absolute';
+      span.style.left = '50%';
+      span.style.top = '50%';
+      span.style.transformOrigin = '0 0';
+      const rotation = angle * index; // Calculate rotation for each letter
+      const adjustedRotation = rotation - 90; // Adjust rotation to point bottom of letter to center
+      span.style.transform = `rotate(${adjustedRotation}deg) translate(${radius}px) rotate(${90}deg)`;
+      circularTextContainer.appendChild(span);
+    });
+  }, []);
+
 
   const inventoryItem = inventory.find(
     (item) => item.color === color && item.size === size
@@ -114,38 +147,47 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-gray-900">
-      <motion.header
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-        className="fixed top-0 left-0 right-0 z-50 p-4 flex justify-between items-center bg-gray-100"
-      >
-        <h1 className="text-2xl font-bold">Mont Noir</h1>
-        <div className="flex items-center gap-4">
-          <img src="./images/logo.png" alt="Mont Noir" className="w-12 h-8" />
-          <Link href="/cart" className="relative">
-            <ShoppingCart className="w-6 h-6 text-gray-700" />
-            {cartItems.length > 0 && (
-              <span className="absolute -top-2 -right-2 bg-gray-800 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                {cartItems.reduce((total, item) => total + item.quantity, 0)}
-              </span>
-            )}
-          </Link>
-        </div>
-      </motion.header>
+    <div className="min-h-screen bg-gray-900 text-white background-image">
+        <motion.header
+		  initial={{ opacity: 0, y: -50 }}
+		  animate={{ opacity: 1, y: 0 }}
+		  transition={{ duration: 0.5, delay: 0.2 }}
+		  className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center bg-gray-900"
+		  style={{ height: '80px' }} // Set a fixed height for the header
+		>
+		  <div className="flex items-center relative">
+			<div className="flex items-center">
+			  <h1 className="text-5xl font-bold text-white mr-4 jomo-font">Mont</h1>
+			  <div className="w-32 h-32 bg-gray-900 rounded-full shadow-lg flex items-center justify-center mt-8"> {/* margin to protrude the logo */}
+				<img src="./images/logo-black.png" alt="Mont Noir" className="w-24 h-24" />
+			  </div>
+			  <h1 className="text-5xl font-bold text-white ml-4 jomo-font">Noir</h1>
+			</div>
+		  </div>
 
-      <main className="container mx-auto px-4 py-12 pt-24">
+		  <div className="absolute right-4 flex items-center">
+			<Link href="/cart" className="relative">
+			  <ShoppingCart className="w-12 h-12 text-gray-100" /> {/* Increased size of cart icon */}
+			  {cartItems.length > 0 && (
+				<span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+				  {cartItems.reduce((total, item) => total + item.quantity, 0)}
+				</span>
+			  )}
+			</Link>
+		  </div>
+		</motion.header>
+
+      <main className="container mx-auto px-4 py-12 pt-32">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.5 }}
           className="text-center mb-12"
         >
-          <h2 className="text-4xl md:text-6xl font-extrabold mb-4">
+          <h2 className="text-5xl font-extrabold mb-4">
             Носи свои мысли
           </h2>
-          <p className="text-xl md:text-2xl text-gray-600">
+          <p className="text-xl text-gray-400">
             Восторг для тех, кто много думает о многом
           </p>
         </motion.div>
@@ -157,66 +199,92 @@ export default function Home() {
               transition={{ duration: 0.5, delay: 0.8 }}
               className="relative"
             >
-              <div className="w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
-                <motion.img
-                  src="./images/circle.jpg"
-                  alt="Overthinking T-Shirt"
-                  className="w-full h-auto object-cover"
-                  style={{ objectPosition: "center 70px" }}
-                />
-              </div>
-              <motion.div
-                className="absolute -top-4 -right-4 bg-gray-800 text-white font-bold py-2 px-4 rounded-full transform rotate-12"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ duration: 0.3, delay: 1.5 }}
-              >
-                Новая коллекция!
-              </motion.div>
+              <div className="relative w-80 h-80">
+				<div id="circular-text"></div>
+				<div className={`circle ${flipped ? "flipped" : ""}`} onClick={handleCircleClick}>
+				  <div className="front">
+					<motion.img
+					  src="./images/circle-front.jpg"
+					  alt="Overthinking T-Shirt"
+					  className="w-full h-full object-cover rounded-full"
+					/>
+				  </div>
+				  <div className="back">
+					<motion.img
+					  src="./images/circle-back.jpg"
+					  alt="Overthinking T-Shirt"
+					  className="w-full h-full object-cover rounded-full"
+					/>
+				  </div>
+				</div>
+			  </div>
             </motion.div>
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 1 }}
-              className="bg-gray-100 p-6 rounded-lg w-full max-w-md"
+              className="bg-gray-100 mt-6 p-6 rounded-lg w-full max-w-md"
             >
-              <h4 className="font-bold text-xl mb-4">Главные фишки:</h4>
-              <ul className="list-disc list-inside text-gray-700 space-y-2">
-                <li>+20 к экзистенциальному кризису</li>
-                <li>День мозга каждый раз когда вы ее надеваете</li>
-                <li>Научно доказано, что делает принятие решений сложнее</li>
-                <li>
-                  Улучшает вашу способность находить проблемы, для которых
-                  придумываете гениальные решения
-                </li>
-                <li>Гарантированно делает простые задачи сложными</li>
-                <li>
-                  Повышает вашу способность создавать воображаемые сценарии
-                </li>
-                <li>
-                  Поставляется со встроенным генератором оправданий для
-                  общественных мероприятий
-                </li>
-              </ul>
+              <h4 className="font-bold text-gray-900 text-xl mb-4">Парадокс Тесея: Переосмысляя вечность</h4>
+            <p className="text-lg space-y-2 mb-2 text-gray-700">
+			Мы предлагаем вам погрузиться в захватывающий парадокс, который уже на протяжении веков вдохновляет философов и мыслителей. Это история о легендарном Тесее, герое, который одержал победу над свирепым Минотавром и освободил Афины от ужасной дани.
+			</p>
+            {isExpanded && (
+                <>
+                    <p className="text-lg space-y-2 mb-2 text-gray-700">	
+                        Что, если мы скажем, что корабль Тесея, на котором он вернулся домой, стал предметом одного из самых интригующих философских вопросов? Согласно историческим данным, корабль Тесея ежегодно отправлялся со священным посольством на Делос на протяжении многих лет после подвига. Перед каждым плаванием корабль ремонтировали, заменяя часть досок, и со временем все доски были заменены, что породило среди философов спор: остался ли корабль тем же самым или уже стал совершенно новым? Кроме того, если бы все заменённые доски сохранили и построили из них другой корабль, то какой из этих двух кораблей являлся бы настоящим?
+                    </p>
+                    <p className="text-lg space-y-2 mb-2 text-gray-700">
+                        Остался ли корабль Тесея прежним кораблем? Этот вопрос заставляет нас задуматься о том, что значит быть "тем же самым" с течением времни. Но, что более важно, остаемся ли и мы самими собой на протяжении своей жизни? Ведь если даже корабль, который мы считаем неизменным, на самом деле меняется буквально в каждой детали, то что можно сказать о нашей собственной идентичности?
+                    </p>
+                </>
+            )}
+            {!isExpanded && (
+                <p className="text-lg mt-2 text-gray-400">
+                    <a 
+                        href="#" 
+                        onClick={(e) => {
+                            e.preventDefault(); // Prevent the default anchor behavior
+                            toggleExpand();
+                        }} 
+                        className="text-gray-400 text-base hover:text-gray-500"
+                    >
+                        Читать еще
+                    </a>
+                </p>
+            )}
+            {isExpanded && (
+                <p className="text-lg mt-2 text-gray-400">
+                    <a 
+                        href="#" 
+                        onClick={(e) => {
+                            e.preventDefault(); // Prevent the default anchor behavior
+                            toggleExpand();
+                        }} 
+                        className="text-gray-400 text-base hover:text-gray-500"
+                    >
+                        Скрыть
+                    </a>
+                </p>
+            )}
             </motion.div>
           </div>
           <motion.div
             initial={{ opacity: 0, x: 100 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 1 }}
-            className="max-w-md w-full"
+            className="max-w-md w-full mx-auto md:mx-0"
           >
-            <h3 className="text-3xl font-bold mb-4">
-              Для любителей переосмыслений
-            </h3>
             <p className="text-lg mb-6">
-              Погрузитесь в глубины своей психики с нашим последним дизайном.
-              Эта футболка не просто заявляет о себе; она запускает целый
-              внутренний диалог о том, кто ты на самом деле.
+              Разработанные и произведенные с любовью в России, эти футболки предлагают вам индивидуальный дизайн и невероятный опыт ношения, благодаря высококачественной ткани и тщательно разработанным кроем. невероятно мягка и нежна к коже, обеспечивая свободу движений и комфорт на протяжении всего дня.
             </p>
-            <p className="text-lg mb-6">95% хлопок, 5% лайкра</p>
-            <p className="text-lg mb-6">Сделано в России</p>
-            <p className="text-lg mb-6">Доставка от 3 рабочих дней</p>
+            <ul className="list-disc list-inside space-y-2 mb-6">
+				<li>95% чистый хлопок, 5% изысканная лайкра</li>
+				<li>Невероятно мягкая и нежная ткань</li>
+				<li>Гарантирует свободу движений и максимальный комфорт</li>
+				<li>Разработаны и произведены в России</li>
+				<li>Доставка от 3 рабочих дней</li>
+			</ul>
             <div className="mb-6">
               <h4 className="font-bold mb-2">Color:</h4>
               <div className="flex gap-4">
@@ -329,43 +397,25 @@ export default function Home() {
                 />
               </div>
               <div className="p-4">
-                <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
+                <h3 className="text-xl text-gray-700 font-bold mb-2">{feature.title}</h3>
                 <p className="text-gray-600">{feature.description}</p>
               </div>
             </motion.div>
           ))}
         </div>
-        <div className="text-center">
-          <a
-            href="/policy.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-600 hover:text-gray-900 underline mr-4"
-          >
-            Политика Конфиденциальности
-          </a>
-          <a
-            href="/oferta.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-600 hover:text-gray-900 underline"
-          >
-            Оферта
-          </a>
-        </div>
-        <section className="bg-gray-50 py-8 mt-8 rounded-lg shadow-inner">
+        <section className="bg-gray-1000 py-2 mt-2">
           <div className="container mx-auto px-4">
-            <h3 className="text-2xl font-semibold text-gray-800 text-center mb-4">
+            <h3 className="text-2xl font-semibold text-gray-200 text-center mb-4">
               Свяжитесь с нами
             </h3>
-            <p className="text-base text-gray-600 text-center mb-6">
+            <p className="text-base text-gray-400 text-center mb-6">
               Мы всегда готовы помочь вам! Свяжитесь с нами по электронной почте
               или через наш Telegram-бот.
             </p>
             <div className="flex flex-col md:flex-row justify-center items-center gap-6">
               <a
                 href="mailto:support@montnoir.com"
-                className="flex items-center text-gray-700 hover:text-gray-900 transition-colors duration-200"
+                className="flex items-center text-gray-100 hover:text-gray-400 transition-colors duration-200"
                 aria-label="Email support@montnoir.com"
               >
                 <MdEmail className="w-6 h-6 mr-2" />
@@ -376,7 +426,7 @@ export default function Home() {
                 href="https://t.me/MontNoirBot"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center text-gray-700 hover:text-gray-900 transition-colors duration-200"
+                className="flex items-center text-gray-100 hover:text-gray-400 transition-colors duration-200"
                 aria-label="Chat with our Telegram bot @MontNoirBot"
               >
                 <SiTelegram className="w-6 h-6 mr-2" />
@@ -390,13 +440,31 @@ export default function Home() {
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 1.5 }}
-        className="text-center py-8 bg-gray-100 text-gray-700"
+        className="text-center py-6 bg-black text-gray-700"
       >
-        <p>&copy; 2024 Mont Noir. Все права защищены. Или нет?</p>
+        <div className="text-center mb-4">
+          <a
+            href="/policy.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-700 hover:text-gray-800 underline mr-4"
+          >
+            Политика Конфиденциальности
+          </a>
+          <a
+            href="/oferta.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-700 hover:text-gray-800 underline"
+          >
+            Оферта
+          </a>
+        </div>
+        <p className="text-gray-600">&copy; 2024 Mont Noir. Все права защищены. Или нет?</p>
         <img
           src="./images/tbank.png"
           alt="Т-Банк"
-          className="w-23 h-9 mx-auto mt-4"
+          className="w-23 h-9 mx-auto mt-4 border-2 border-white bg-white rounded-lg shadow-lg"
         />
       </motion.footer>
     </div>
