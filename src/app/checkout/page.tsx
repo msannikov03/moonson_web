@@ -181,133 +181,140 @@ export default function Checkout() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsProcessing(true);
+  // Inside handleSubmit in CheckoutForm.tsx
 
-    try {
-      if (!payLoaded || typeof window.pay !== "function") {
-        alert("Скрипт оплаты не загружен. Пожалуйста, попробуйте позже.");
-        setIsProcessing(false);
-        return;
-      }
+const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  setIsProcessing(true);
 
-      const orderNumber = "Order" + Date.now();
-      const fullName = `${firstName} ${lastName}`;
-      const shippingCost = freeShipping
-        ? 0
-        : shippingMethod === "spb"
-        ? 400
-        : 500;
-      const calculatedDiscount = (subtotal * discount) / 100;
-      const discountedSubtotal = subtotal - calculatedDiscount;
-
-      const cartItemsWithShipping: CartItemWithShipping[] = [
-        ...cartItems,
-        {
-          color: null,
-          size: null,
-          quantity: 1,
-          name:
-            shippingMethod === "spb"
-              ? "Доставка по СПБ и Ленинградской области"
-              : "Доставка по России",
-          price: shippingCost,
-        },
-      ];
-
-      const items = cartItemsWithShipping.map((item) => {
-        let priceInKopeks: number;
-        let amountInKopeks: number;
-        let itemName: string;
-        let paymentObject: string;
-        let tax: string;
-        let measurementUnit: string;
-
-        if ("name" in item) {
-          priceInKopeks = Math.round(item.price * 100);
-          amountInKopeks = priceInKopeks * item.quantity;
-          itemName = item.name;
-          paymentObject = "service";
-          tax = "none";
-          measurementUnit = "шт";
-        } else {
-          const productPrice = 3400 * (1 - discount / 100);
-          priceInKopeks = Math.round(productPrice * 100);
-          amountInKopeks = priceInKopeks * item.quantity;
-          itemName = `Overthinker's Delight T-Shirt (${item.color}, ${item.size})`;
-          paymentObject = "commodity";
-          tax = "none";
-          measurementUnit = "шт";
-        }
-
-        return {
-          Name: itemName,
-          Price: priceInKopeks.toString(),
-          Quantity: item.quantity.toString(),
-          Amount: amountInKopeks.toString(),
-          PaymentMethod: "full_prepayment",
-          PaymentObject: paymentObject,
-          Tax: tax,
-          MeasurementUnit: measurementUnit,
-        };
-      });
-
-      const totalAmountInKopeks = Math.round(
-        (discountedSubtotal + shippingCost) * 100
-      );
-
-      const Receipt = {
-        EmailCompany: "support@montnoir.ru",
-        Taxation: "usn_income_outcome",
-        FfdVersion: "1.2",
-        Items: items,
-      };
-
-      const receiptJson = JSON.stringify(Receipt);
-
-      const TPF = {
-        terminalkey: process.env.NEXT_PUBLIC_TINKOFF_TERMINAL_KEY || "",
-        frame: "false",
-        language: "ru",
-        amount: (totalAmountInKopeks / 100).toFixed(2),
-        order: orderNumber,
-        description: "Оплата заказа",
-        name: fullName,
-        email: email,
-        phone: phone,
-        receipt: receiptJson,
-      };
-
-      const parsedAmount = parseFloat(TPF.amount);
-      const expectedAmount = discountedSubtotal + shippingCost;
-      if (Math.abs(parsedAmount - expectedAmount) > 0.01) {
-        alert("Произошла ошибка при обработке вашего платежа. Пожалуйста, попробуйте еще раз.");
-        setIsProcessing(false);
-        return;
-      }
-
-      const form = document.createElement("form");
-      form.id = "payform-tbank";
-
-      Object.entries(TPF).forEach(([key, value]) => {
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = key;
-        input.value = value;
-        form.appendChild(input);
-      });
-
-      document.body.appendChild(form);
-      console.log("Payment Form:", form);
-      window.pay(form);
-    } catch (error: any) {
-      alert("Произошла ошибка при обработке вашего платежа: " + error.message);
-      console.error("Ошибка платежа:", error);
-    } finally {
+  try {
+    if (!payLoaded || typeof window.pay !== "function") {
+      alert("Скрипт оплаты не загружен. Пожалуйста, попробуйте позже.");
       setIsProcessing(false);
+      return;
     }
-  };
+
+    const orderNumber = "Order" + Date.now();
+    const fullName = `${firstName} ${lastName}`;
+    const shippingCost = freeShipping
+      ? 0
+      : shippingMethod === "spb"
+      ? 400
+      : 500;
+    const calculatedDiscount = (subtotal * discount) / 100;
+    const discountedSubtotal = subtotal - calculatedDiscount;
+
+    const cartItemsWithShipping: CartItemWithShipping[] = [
+      ...cartItems,
+      {
+        color: null,
+        size: null,
+        quantity: 1,
+        name:
+          shippingMethod === "spb"
+            ? "Доставка по СПБ и Ленинградской области"
+            : "Доставка по России",
+        price: shippingCost,
+      },
+    ];
+
+    const items = cartItemsWithShipping.map((item) => {
+      let priceInKopeks: number;
+      let amountInKopeks: number;
+      let itemName: string;
+      let paymentObject: string;
+      let tax: string;
+      let measurementUnit: string;
+
+      if ("name" in item) {
+        priceInKopeks = Math.round(item.price * 100);
+        amountInKopeks = priceInKopeks * item.quantity;
+        itemName = item.name;
+        paymentObject = "service";
+        tax = "none";
+        measurementUnit = "шт";
+      } else {
+        const productPrice = 3400 * (1 - discount / 100);
+        priceInKopeks = Math.round(productPrice * 100);
+        amountInKopeks = priceInKopeks * item.quantity;
+        itemName = `Overthinker's Delight T-Shirt (${item.color}, ${item.size})`;
+        paymentObject = "commodity";
+        tax = "none";
+        measurementUnit = "шт";
+      }
+
+      return {
+        Name: itemName,
+        Price: priceInKopeks.toString(),
+        Quantity: item.quantity.toString(),
+        Amount: amountInKopeks.toString(),
+        PaymentMethod: "full_prepayment",
+        PaymentObject: paymentObject,
+        Tax: tax,
+        MeasurementUnit: measurementUnit,
+      };
+    });
+
+    const totalAmountInKopeks = Math.round(
+      (discountedSubtotal + shippingCost) * 100
+    );
+
+    const Receipt = {
+      EmailCompany: "support@montnoir.ru",
+      Taxation: "usn_income_outcome",
+      FfdVersion: "1.2",
+      Items: items,
+    };
+
+    const receiptJson = JSON.stringify(Receipt);
+
+    const returnUrl = `${process.env.NEXT_PUBLIC_YOUR_DOMAIN}/confirmation?order=${orderNumber}`;
+    const failUrl = `${process.env.NEXT_PUBLIC_YOUR_DOMAIN}/checkout?error=payment_failed`;
+
+    const TPF = {
+      terminalkey: process.env.NEXT_PUBLIC_TINKOFF_TERMINAL_KEY || "",
+      frame: "false",
+      language: "ru",
+      amount: (totalAmountInKopeks / 100).toFixed(2),
+      order: orderNumber,
+      description: "Оплата заказа",
+      name: fullName,
+      email: email,
+      phone: phone,
+      receipt: receiptJson,
+      SuccessURL: returnUrl,
+      FailURL: failUrl,
+    };
+
+    const parsedAmount = parseFloat(TPF.amount);
+    const expectedAmount = discountedSubtotal + shippingCost;
+    if (Math.abs(parsedAmount - expectedAmount) > 0.01) {
+      alert("Произошла ошибка при обработке вашего платежа. Пожалуйста, попробуйте еще раз.");
+      setIsProcessing(false);
+      return;
+    }
+
+    const form = document.createElement("form");
+    form.id = "payform-tbank";
+
+    Object.entries(TPF).forEach(([key, value]) => {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = key;
+      input.value = value;
+      form.appendChild(input);
+    });
+
+    document.body.appendChild(form);
+    console.log("Payment Form:", form);
+    window.pay(form);
+  } catch (error: any) {
+    alert("Произошла ошибка при обработке вашего платежа: " + error.message);
+    console.error("Ошибка платежа:", error);
+  } finally {
+    setIsProcessing(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -528,7 +535,7 @@ export default function Checkout() {
                       className="flex justify-between items-center text-sm"
                     >
                       <span>
-                        {item.quantity}x Overthinker's Delight T-Shirt (
+                        {item.quantity}x Overthinker&apos;s Delight T-Shirt (
                         {item.color}, {item.size})
                       </span>
                       <span>₽{(item.quantity * 3400).toFixed(2)}</span>

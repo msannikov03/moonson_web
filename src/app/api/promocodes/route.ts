@@ -1,5 +1,3 @@
-// src/app/api/promocodes/route.ts
-
 import { NextResponse } from 'next/server';
 import { readFile } from 'fs/promises';
 import path from 'path';
@@ -15,6 +13,7 @@ export async function POST(request: Request) {
   const { codes } = await request.json();
   const filePath = path.join(process.cwd(), 'db.json');
 
+  // Проверка, что передан массив промокодов и их количество не превышает 2
   if (!Array.isArray(codes) || codes.length === 0 || codes.length > 2) {
     return NextResponse.json(
       { valid: false, message: 'Можно применить до двух промокодов.' },
@@ -32,7 +31,8 @@ export async function POST(request: Request) {
 
     for (const code of codes) {
       const promo = data.promocodes.find(
-        (promo: PromoCode) => promo.code.toLowerCase() === code.toLowerCase() && promo.active
+        (promo: PromoCode) =>
+          promo.code.toLowerCase() === code.toLowerCase() && promo.active
       );
 
       if (promo && !appliedCodes.includes(promo.code.toLowerCase())) {

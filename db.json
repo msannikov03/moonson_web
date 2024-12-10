@@ -11,15 +11,15 @@
   ],
   "promocodes": [
     {
-      "code": "SAVE10",
-      "discountPercent": 10,
-      "active": true
-    },
-    {
-      "code": "FREESHIP",
+      "code": "FREESHIPPY",
       "discountPercent": 0,
       "active": true,
       "freeShipping": true
+    },
+    {
+      "code": "CORVEE",
+      "discountPercent": 5,
+      "active": true
     }
   ]
 }
