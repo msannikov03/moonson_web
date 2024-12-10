@@ -17,6 +17,7 @@ export default function Home() {
   const { addToCart, cartItems } = useCart();
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [flipped, setFlipped] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
     setIsLoaded(true);
@@ -35,9 +36,13 @@ export default function Home() {
     setFlipped(!flipped);
   };
   
+  const toggleExpand = () => {
+        setIsExpanded(!isExpanded);
+    };
+  
   useEffect(() => {
-    const text = "кликни кликни кликни кликни кликни кликни ";
-    const radius = 150; // Adjust the radius as needed
+    const text = "кликни кликни кликни кликни кликни кликни кликни ";
+    const radius = 185; // Adjust the radius as needed
     const letters = text.split('');
     const angle = 360 / letters.length;
 
@@ -152,11 +157,11 @@ export default function Home() {
 		>
 		  <div className="flex items-center relative">
 			<div className="flex items-center">
-			  <h1 className="text-3xl font-bold text-white mr-4">Mont</h1>
+			  <h1 className="text-5xl font-bold text-white mr-4 jomo-font">Mont</h1>
 			  <div className="w-32 h-32 bg-gray-900 rounded-full shadow-lg flex items-center justify-center mt-8"> {/* margin to protrude the logo */}
 				<img src="./images/logo-black.png" alt="Mont Noir" className="w-24 h-24" />
 			  </div>
-			  <h1 className="text-3xl font-bold text-white ml-4">Noir</h1>
+			  <h1 className="text-5xl font-bold text-white ml-4 jomo-font">Noir</h1>
 			</div>
 		  </div>
 
@@ -194,7 +199,7 @@ export default function Home() {
               transition={{ duration: 0.5, delay: 0.8 }}
               className="relative"
             >
-              <div className="relative w-64 h-64">
+              <div className="relative w-80 h-80">
 				<div id="circular-text"></div>
 				<div className={`circle ${flipped ? "flipped" : ""}`} onClick={handleCircleClick}>
 				  <div className="front">
@@ -218,45 +223,68 @@ export default function Home() {
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 1 }}
-              className="bg-gray-100 p-6 rounded-lg w-full max-w-md"
+              className="bg-gray-100 mt-6 p-6 rounded-lg w-full max-w-md"
             >
-              <h4 className="font-bold text-gray-900 text-xl mb-4">Главные фишки:</h4>
-              <ul className="list-disc list-inside text-gray-700 space-y-2">
-                <li>+20 к экзистенциальному кризису</li>
-                <li>День мозга каждый раз когда вы ее надеваете</li>
-                <li>Научно доказано, что делает принятие решений сложнее</li>
-                <li>
-                  Улучшает вашу способность находить проблемы, для которых
-                  придумываете гениальные решения
-                </li>
-                <li>Гарантированно делает простые задачи сложными</li>
-                <li>
-                  Повышает вашу способность создавать воображаемые сценарии
-                </li>
-                <li>
-                  Поставляется со встроенным генератором оправданий для
-                  общественных мероприятий
-                </li>
-              </ul>
+              <h4 className="font-bold text-gray-900 text-xl mb-4">Парадокс Тесея: Переосмысляя вечность</h4>
+            <p className="text-lg space-y-2 mb-2 text-gray-700">
+			Мы предлагаем вам погрузиться в захватывающий парадокс, который уже на протяжении веков вдохновляет философов и мыслителей. Это история о легендарном Тесее, герое, который одержал победу над свирепым Минотавром и освободил Афины от ужасной дани.
+			</p>
+            {isExpanded && (
+                <>
+                    <p className="text-lg space-y-2 mb-2 text-gray-700">	
+                        Что, если мы скажем, что корабль Тесея, на котором он вернулся домой, стал предметом одного из самых интригующих философских вопросов? Согласно историческим данным, корабль Тесея ежегодно отправлялся со священным посольством на Делос на протяжении многих лет после подвига. Перед каждым плаванием корабль ремонтировали, заменяя часть досок, и со временем все доски были заменены, что породило среди философов спор: остался ли корабль тем же самым или уже стал совершенно новым? Кроме того, если бы все заменённые доски сохранили и построили из них другой корабль, то какой из этих двух кораблей являлся бы настоящим?
+                    </p>
+                    <p className="text-lg space-y-2 mb-2 text-gray-700">
+                        Остался ли корабль Тесея прежним кораблем? Этот вопрос заставляет нас задуматься о том, что значит быть "тем же самым" с течением времни. Но, что более важно, остаемся ли и мы самими собой на протяжении своей жизни? Ведь если даже корабль, который мы считаем неизменным, на самом деле меняется буквально в каждой детали, то что можно сказать о нашей собственной идентичности?
+                    </p>
+                </>
+            )}
+            {!isExpanded && (
+                <p className="text-lg mt-2 text-gray-400">
+                    <a 
+                        href="#" 
+                        onClick={(e) => {
+                            e.preventDefault(); // Prevent the default anchor behavior
+                            toggleExpand();
+                        }} 
+                        className="text-gray-400 text-base hover:text-gray-500"
+                    >
+                        Читать еще
+                    </a>
+                </p>
+            )}
+            {isExpanded && (
+                <p className="text-lg mt-2 text-gray-400">
+                    <a 
+                        href="#" 
+                        onClick={(e) => {
+                            e.preventDefault(); // Prevent the default anchor behavior
+                            toggleExpand();
+                        }} 
+                        className="text-gray-400 text-base hover:text-gray-500"
+                    >
+                        Скрыть
+                    </a>
+                </p>
+            )}
             </motion.div>
           </div>
           <motion.div
             initial={{ opacity: 0, x: 100 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 1 }}
-            className="max-w-md w-full"
+            className="max-w-md w-full mx-auto md:mx-0"
           >
-            <h3 className="text-3xl font-bold mb-4">
-              Для любителей переосмыслений
-            </h3>
             <p className="text-lg mb-6">
-              Погрузитесь в глубины своей психики с нашим последним дизайном.
-              Эта футболка не просто заявляет о себе; она запускает целый
-              внутренний диалог о том, кто ты на самом деле.
+              Разработанные и произведенные с любовью в России, эти футболки предлагают вам индивидуальный дизайн и невероятный опыт ношения, благодаря высококачественной ткани и тщательно разработанным кроем. невероятно мягка и нежна к коже, обеспечивая свободу движений и комфорт на протяжении всего дня.
             </p>
-            <p className="text-lg mb-6">95% хлопок, 5% лайкра</p>
-            <p className="text-lg mb-6">Сделано в России</p>
-            <p className="text-lg mb-6">Доставка от 3 рабочих дней</p>
+            <ul className="list-disc list-inside space-y-2 mb-6">
+				<li>95% чистый хлопок, 5% изысканная лайкра</li>
+				<li>Невероятно мягкая и нежная ткань</li>
+				<li>Гарантирует свободу движений и максимальный комфорт</li>
+				<li>Разработаны и произведены в России</li>
+				<li>Доставка от 3 рабочих дней</li>
+			</ul>
             <div className="mb-6">
               <h4 className="font-bold mb-2">Color:</h4>
               <div className="flex gap-4">

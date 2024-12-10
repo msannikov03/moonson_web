@@ -215,3 +215,15 @@ footer {
     }
 }
 
+@font-face {
+    font-family: 'Jomolhari';
+    src: url('/fonts/Jomolhari.ttf') format('ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* You can also define a class for the custom font */
+.jomo-font {
+    font-family: 'Jomolhari'; 
+	letter-spacing: 2px;
+}
