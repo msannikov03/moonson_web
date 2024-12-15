@@ -110,14 +110,30 @@ header {
 
 /* Button Styles */
 button {
-  background-color: #ff4081; /* Bright accent color */
+  background-color: rgba(31, 41, 45, 1); /* Bright accent color */
   color: white;
   transition: background-color 0.3s ease;
 }
 
 button:hover {
-  background-color: #e91e63; /* Darker shade on hover */
+  background-color: rgba(35, 35, 35, 0.7); /* Darker shade on hover */
 }
+
+/* Override hover effect for color-picker buttons */
+.color-picker:hover {
+  border-color: rgb(110, 110, 110); /* Change border color on hover */
+  border-width: 2px;
+}
+
+/* Specific hover styles for black and white buttons */
+button.bg-black:hover {
+  background-color: rgba(0, 0, 0, 1); /* Keep black button background unchanged */
+}
+
+button.bg-white:hover {
+  background-color: rgba(255, 255, 255, 1); /* Keep white button background unchanged */
+}
+
 
 /* Feature Cards */
 .feature-card {

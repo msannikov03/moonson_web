@@ -160,11 +160,11 @@ export default function Home() {
 		>
 		  <div className="flex items-center relative">
 			<div className="flex items-center">
-			  <h1 className="text-5xl font-bold text-white mr-4 jomo-font">Mont</h1>
+			  <h1 className="text-4xl sm:text-5xl font-bold text-white mr-4 jomo-font">Mont</h1>
 			  <div className="w-32 h-32 bg-gray-900 rounded-full shadow-lg flex items-center justify-center mt-8"> {/* margin to protrude the logo */}
 				<img src="./images/logo-black.png" alt="Mont Noir" className="w-24 h-24" />
 			  </div>
-			  <h1 className="text-5xl font-bold text-white ml-4 jomo-font">Noir</h1>
+			  <h1 className="text-4xl sm:text-5xl font-bold text-white ml-4 jomo-font">Noir</h1>
 			</div>
 		  </div>
 
@@ -302,7 +302,7 @@ export default function Home() {
                       onClick={() => handleColorChange(c)}
                       disabled={!hasStock}
                       className={`w-8 h-8 rounded-full ${
-                        color === c ? "ring-2 ring-gray-500" : ""
+                        color === c ? "ring-2 ring-gray-500 color-picker" : "color-picker"
                       } ${
                         c === "black"
                           ? "bg-black"
