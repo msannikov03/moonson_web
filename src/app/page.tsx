@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ShoppingCart } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { MdEmail } from "react-icons/md";
 import { SiTelegram } from "react-icons/si";
@@ -35,37 +36,36 @@ export default function Home() {
   const handleCircleClick = () => {
     setFlipped(!flipped);
   };
-  
+
   const toggleExpand = () => {
-        setIsExpanded(!isExpanded);
-    };
-  
+    setIsExpanded(!isExpanded);
+  };
+
   useEffect(() => {
     const text = "кликни кликни кликни кликни кликни кликни кликни ";
     const radius = 185; // Adjust the radius as needed
-    const letters = text.split('');
+    const letters = text.split("");
     const angle = 360 / letters.length;
 
-    const circularTextContainer = document.getElementById('circular-text');
+    const circularTextContainer = document.getElementById("circular-text");
     if (!circularTextContainer) {
       return;
     }
-    circularTextContainer.innerHTML = ''; // Clear previous content
+    circularTextContainer.innerHTML = ""; // Clear previous content
 
     letters.forEach((letter, index) => {
-      const span = document.createElement('span');
+      const span = document.createElement("span");
       span.innerText = letter;
-      span.style.position = 'absolute';
-      span.style.left = '50%';
-      span.style.top = '50%';
-      span.style.transformOrigin = '0 0';
+      span.style.position = "absolute";
+      span.style.left = "50%";
+      span.style.top = "50%";
+      span.style.transformOrigin = "0 0";
       const rotation = angle * index; // Calculate rotation for each letter
       const adjustedRotation = rotation - 90; // Adjust rotation to point bottom of letter to center
       span.style.transform = `rotate(${adjustedRotation}deg) translate(${radius}px) rotate(${90}deg)`;
       circularTextContainer.appendChild(span);
     });
   }, []);
-
 
   const inventoryItem = inventory.find(
     (item) => item.color === color && item.size === size
@@ -151,34 +151,47 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white background-image">
-        <motion.header
-		  initial={{ opacity: 0, y: -50 }}
-		  animate={{ opacity: 1, y: 0 }}
-		  transition={{ duration: 0.5, delay: 0.2 }}
-		  className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center bg-gray-900"
-		  style={{ height: '80px' }} // Set a fixed height for the header
-		>
-		  <div className="flex items-center relative">
-			<div className="flex items-center">
-			  <h1 className="text-4xl sm:text-5xl font-bold text-white mr-4 jomo-font">Mont</h1>
-			  <div className="w-32 h-32 bg-gray-900 rounded-full shadow-lg flex items-center justify-center mt-8"> {/* margin to protrude the logo */}
-				<img src="./images/logo-black.png" alt="Mont Noir" className="w-24 h-24" />
-			  </div>
-			  <h1 className="text-4xl sm:text-5xl font-bold text-white ml-4 jomo-font">Noir</h1>
-			</div>
-		  </div>
+      <motion.header
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center bg-gray-900"
+        style={{ height: "80px" }} // Set a fixed height for the header
+      >
+        <div className="flex items-center relative">
+          <div className="flex items-center">
+            <h1 className="text-4xl sm:text-5xl font-bold text-white mr-4 jomo-font">
+              Mont
+            </h1>
+            <div className="w-32 h-32 bg-gray-900 rounded-full shadow-lg flex items-center justify-center mt-8">
+              {" "}
+              {/* margin to protrude the logo */}
+              <Image
+                src="/images/logo-black.png"
+                alt="Mont Noir"
+                width={96}
+                height={96}
+                className="w-24 h-24"
+              />
+            </div>
+            <h1 className="text-4xl sm:text-5xl font-bold text-white ml-4 jomo-font">
+              Noir
+            </h1>
+          </div>
+        </div>
 
-		  <div className="absolute right-4 flex items-center">
-			<Link href="/cart" className="relative">
-			  <ShoppingCart className="w-12 h-12 text-gray-100" /> {/* Increased size of cart icon */}
-			  {cartItems.length > 0 && (
-				<span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-				  {cartItems.reduce((total, item) => total + item.quantity, 0)}
-				</span>
-			  )}
-			</Link>
-		  </div>
-		</motion.header>
+        <div className="absolute right-4 flex items-center">
+          <Link href="/cart" className="relative">
+            <ShoppingCart className="w-12 h-12 text-gray-100" />{" "}
+            {/* Increased size of cart icon */}
+            {cartItems.length > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                {cartItems.reduce((total, item) => total + item.quantity, 0)}
+              </span>
+            )}
+          </Link>
+        </div>
+      </motion.header>
 
       <main className="container mx-auto px-4 py-12 pt-32">
         <motion.div
@@ -187,9 +200,7 @@ export default function Home() {
           transition={{ duration: 0.5, delay: 0.5 }}
           className="text-center mb-12"
         >
-          <h2 className="text-5xl font-extrabold mb-4">
-            Носи свои мысли
-          </h2>
+          <h2 className="text-5xl font-extrabold mb-4">Носи свои мысли</h2>
           <p className="text-xl text-gray-400">
             Восторг для тех, кто много думает о многом
           </p>
@@ -203,24 +214,27 @@ export default function Home() {
               className="relative"
             >
               <div className="relative w-80 h-80">
-				<div id="circular-text"></div>
-				<div className={`circle ${flipped ? "flipped" : ""}`} onClick={handleCircleClick}>
-				  <div className="front">
-					<motion.img
-					  src="./images/circle-front.jpg"
-					  alt="Overthinking T-Shirt"
-					  className="w-full h-full object-cover rounded-full"
-					/>
-				  </div>
-				  <div className="back">
-					<motion.img
-					  src="./images/circle-back.jpg"
-					  alt="Overthinking T-Shirt"
-					  className="w-full h-full object-cover rounded-full"
-					/>
-				  </div>
-				</div>
-			  </div>
+                <div id="circular-text"></div>
+                <div
+                  className={`circle ${flipped ? "flipped" : ""}`}
+                  onClick={handleCircleClick}
+                >
+                  <div className="front">
+                    <motion.img
+                      src="./images/circle-front.jpg"
+                      alt="Overthinking T-Shirt"
+                      className="w-full h-full object-cover rounded-full"
+                    />
+                  </div>
+                  <div className="back">
+                    <motion.img
+                      src="./images/circle-back.jpg"
+                      alt="Overthinking T-Shirt"
+                      className="w-full h-full object-cover rounded-full"
+                    />
+                  </div>
+                </div>
+              </div>
             </motion.div>
             <motion.div
               initial={{ opacity: 0, y: 50 }}
@@ -228,48 +242,69 @@ export default function Home() {
               transition={{ duration: 0.5, delay: 1 }}
               className="bg-gray-100 mt-6 p-6 rounded-lg w-full max-w-md"
             >
-              <h4 className="font-bold text-gray-900 text-xl mb-4">Парадокс Тесея: Переосмысляя вечность</h4>
-            <p className="text-lg space-y-2 mb-2 text-gray-700">
-			Мы предлагаем вам погрузиться в захватывающий парадокс, который уже на протяжении веков вдохновляет философов и мыслителей. Это история о легендарном Тесее, герое, который одержал победу над свирепым Минотавром и освободил Афины от ужасной дани.
-			</p>
-            {isExpanded && (
+              <h4 className="font-bold text-gray-900 text-xl mb-4">
+                Парадокс Тесея: Переосмысляя вечность
+              </h4>
+              <p className="text-lg space-y-2 mb-2 text-gray-700">
+                Мы предлагаем вам погрузиться в захватывающий парадокс, который
+                уже на протяжении веков вдохновляет философов и мыслителей. Это
+                история о легендарном Тесее, герое, который одержал победу над
+                свирепым Минотавром и освободил Афины от ужасной дани.
+              </p>
+              {isExpanded && (
                 <>
-                    <p className="text-lg space-y-2 mb-2 text-gray-700">	
-                        Что, если мы скажем, что корабль Тесея, на котором он вернулся домой, стал предметом одного из самых интригующих философских вопросов? Согласно историческим данным, корабль Тесея ежегодно отправлялся со священным посольством на Делос на протяжении многих лет после подвига. Перед каждым плаванием корабль ремонтировали, заменяя часть досок, и со временем все доски были заменены, что породило среди философов спор: остался ли корабль тем же самым или уже стал совершенно новым? Кроме того, если бы все заменённые доски сохранили и построили из них другой корабль, то какой из этих двух кораблей являлся бы настоящим?
-                    </p>
-                    <p className="text-lg space-y-2 mb-2 text-gray-700">
-                        Остался ли корабль Тесея прежним кораблем? Этот вопрос заставляет нас задуматься о том, что значит быть &quot;тем же самым&quot; с течением времни. Но, что более важно, остаемся ли и мы самими собой на протяжении своей жизни? Ведь если даже корабль, который мы считаем неизменным, на самом деле меняется буквально в каждой детали, то что можно сказать о нашей собственной идентичности?
-                    </p>
+                  <p className="text-lg space-y-2 mb-2 text-gray-700">
+                    Что, если мы скажем, что корабль Тесея, на котором он
+                    вернулся домой, стал предметом одного из самых интригующих
+                    философских вопросов? Согласно историческим данным, корабль
+                    Тесея ежегодно отправлялся со священным посольством на Делос
+                    на протяжении многих лет после подвига. Перед каждым
+                    плаванием корабль ремонтировали, заменяя часть досок, и со
+                    временем все доски были заменены, что породило среди
+                    философов спор: остался ли корабль тем же самым или уже стал
+                    совершенно новым? Кроме того, если бы все заменённые доски
+                    сохранили и построили из них другой корабль, то какой из
+                    этих двух кораблей являлся бы настоящим?
+                  </p>
+                  <p className="text-lg space-y-2 mb-2 text-gray-700">
+                    Остался ли корабль Тесея прежним кораблем? Этот вопрос
+                    заставляет нас задуматься о том, что значит быть &quot;тем
+                    же самым&quot; с течением времни. Но, что более важно,
+                    остаемся ли и мы самими собой на протяжении своей жизни?
+                    Ведь если даже корабль, который мы считаем неизменным, на
+                    самом деле меняется буквально в каждой детали, то что можно
+                    сказать о нашей собственной идентичности?
+                  </p>
                 </>
-            )}
-            {!isExpanded && (
+              )}
+              {!isExpanded && (
                 <p className="text-lg mt-2 text-gray-400">
-                    <a 
-                        href="#" 
-                        onClick={(e) => {
-                            e.preventDefault(); // Prevent the default anchor behavior
-                            toggleExpand();
-                        }} 
-                        className="text-gray-400 text-base hover:text-gray-500"
-                    >
-                        Читать еще
-                    </a>
+                  <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault(); // Prevent the default anchor behavior
+                      toggleExpand();
+                    }}
+                    className="text-gray-400 text-base hover:text-gray-500"
+                  >
+                    Читать еще
+                  </a>
                 </p>
-            )}
-            {isExpanded && (
+              )}
+              {isExpanded && (
                 <p className="text-lg mt-2 text-gray-400">
-                    <a 
-                        href="#" 
-                        onClick={(e) => {
-                            e.preventDefault(); // Prevent the default anchor behavior
-                            toggleExpand();
-                        }} 
-                        className="text-gray-400 text-base hover:text-gray-500"
-                    >
-                        Скрыть
-                    </a>
+                  <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault(); // Prevent the default anchor behavior
+                      toggleExpand();
+                    }}
+                    className="text-gray-400 text-base hover:text-gray-500"
+                  >
+                    Скрыть
+                  </a>
                 </p>
-            )}
+              )}
             </motion.div>
           </div>
           <motion.div
@@ -279,15 +314,19 @@ export default function Home() {
             className="max-w-md w-full mx-auto md:mx-0"
           >
             <p className="text-lg mb-6">
-              Разработанные и произведенные с любовью в России, эти футболки предлагают вам индивидуальный дизайн и невероятный опыт ношения, благодаря высококачественной ткани и тщательно разработанным кроем. невероятно мягка и нежна к коже, обеспечивая свободу движений и комфорт на протяжении всего дня.
+              Разработанные и произведенные с любовью в России, эти футболки
+              предлагают вам индивидуальный дизайн и невероятный опыт ношения,
+              благодаря высококачественной ткани и тщательно разработанным
+              кроем. невероятно мягка и нежна к коже, обеспечивая свободу
+              движений и комфорт на протяжении всего дня.
             </p>
             <ul className="list-disc list-inside space-y-2 mb-6">
-				<li>95% чистый хлопок, 5% изысканная лайкра</li>
-				<li>Невероятно мягкая и нежная ткань</li>
-				<li>Гарантирует свободу движений и максимальный комфорт</li>
-				<li>Разработаны и произведены в России</li>
-				<li>Доставка от 3 рабочих дней</li>
-			</ul>
+              <li>95% чистый хлопок, 5% изысканная лайкра</li>
+              <li>Невероятно мягкая и нежная ткань</li>
+              <li>Гарантирует свободу движений и максимальный комфорт</li>
+              <li>Разработаны и произведены в России</li>
+              <li>Доставка от 3 рабочих дней</li>
+            </ul>
             <div className="mb-6">
               <h4 className="font-bold mb-2">Color:</h4>
               <div className="flex gap-4">
@@ -302,7 +341,9 @@ export default function Home() {
                       onClick={() => handleColorChange(c)}
                       disabled={!hasStock}
                       className={`w-8 h-8 rounded-full ${
-                        color === c ? "ring-2 ring-gray-500 color-picker" : "color-picker"
+                        color === c
+                          ? "ring-2 ring-gray-500 color-picker"
+                          : "color-picker"
                       } ${
                         c === "black"
                           ? "bg-black"
@@ -393,14 +434,18 @@ export default function Home() {
               className="bg-gray-100 rounded-lg overflow-hidden shadow-lg"
             >
               <div className="w-full aspect-square overflow-hidden">
-                <img
+                <Image
                   src={feature.image}
                   alt={feature.title}
                   className={`w-full h-full object-cover [object-position:center_calc(50%_+_${feature.yShift}px)]`}
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
               </div>
               <div className="p-4">
-                <h3 className="text-xl text-gray-700 font-bold mb-2">{feature.title}</h3>
+                <h3 className="text-xl text-gray-700 font-bold mb-2">
+                  {feature.title}
+                </h3>
                 <p className="text-gray-600">{feature.description}</p>
               </div>
             </motion.div>
@@ -463,11 +508,15 @@ export default function Home() {
             Оферта
           </a>
         </div>
-        <p className="text-gray-600">&copy; 2024 Mont Noir. Все права защищены. Или нет?</p>
-        <img
-          src="./images/tbank.png"
+        <p className="text-gray-600">
+          &copy; 2024 Mont Noir. Все права защищены. Или нет?
+        </p>
+        <Image
+          src="/images/tbank.png"
           alt="Т-Банк"
-          className="w-23 h-9 mx-auto mt-4 border-2 border-white bg-white rounded-lg shadow-lg"
+          width={92}
+          height={36}
+          className="mx-auto mt-4 border-2 border-white bg-white rounded-lg shadow-lg"
         />
       </motion.footer>
     </div>
