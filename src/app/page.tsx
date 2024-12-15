@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ShoppingCart } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { MdEmail } from "react-icons/md";
 import { SiTelegram } from "react-icons/si";
@@ -166,11 +165,9 @@ export default function Home() {
             <div className="w-32 h-32 bg-gray-900 rounded-full shadow-lg flex items-center justify-center mt-8">
               {" "}
               {/* margin to protrude the logo */}
-              <Image
-                src="/images/logo-black.png"
+              <img
+                src="./images/logo-black.png"
                 alt="Mont Noir"
-                width={96}
-                height={96}
                 className="w-24 h-24"
               />
             </div>
@@ -434,12 +431,10 @@ export default function Home() {
               className="bg-gray-100 rounded-lg overflow-hidden shadow-lg"
             >
               <div className="w-full aspect-square overflow-hidden">
-                <Image
+                <img
                   src={feature.image}
                   alt={feature.title}
                   className={`w-full h-full object-cover [object-position:center_calc(50%_+_${feature.yShift}px)]`}
-                  fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
               </div>
               <div className="p-4">
@@ -511,12 +506,10 @@ export default function Home() {
         <p className="text-gray-600">
           &copy; 2024 Mont Noir. Все права защищены. Или нет?
         </p>
-        <Image
-          src="/images/tbank.png"
+        <img
+          src="./images/tbank.png"
           alt="Т-Банк"
-          width={92}
-          height={36}
-          className="mx-auto mt-4 border-2 border-white bg-white rounded-lg shadow-lg"
+          className="w-23 h-9 mx-auto mt-4 border-2 border-white bg-white rounded-lg shadow-lg"
         />
       </motion.footer>
     </div>
