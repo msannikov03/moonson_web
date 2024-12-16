@@ -44,8 +44,9 @@ export default function Cart() {
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="fixed top-0 left-0 right-0 z-50 p-4 flex justify-between items-center bg-gray-100"
+        className="flex-wrap top-0 left-0 right-0 z-50 p-4 bg-gray-100 shadow-sm"
       >
+        <div className="container mx-auto flex justify-between items-center">
         <Link
           href="/"
           className="flex items-center text-gray-700 hover:text-gray-900"
@@ -53,7 +54,8 @@ export default function Cart() {
           <ArrowLeft className="w-5 h-5 mr-2" />
           Обратно в магазин
         </Link>
-        <h1 className="text-2xl font-bold">Ваша Корзина</h1>
+        </div>
+        <h1 className="text-3xl font-bold text-gray-900 text-center mt-4">Ваша Корзина</h1>
       </motion.header>
       <main className="container mx-auto px-4 py-12 pt-24">
         {cartItems.length === 0 ? (
@@ -125,7 +127,7 @@ export default function Cart() {
                       </p>
                       <button
                         onClick={() => removeFromCart(index)}
-                        className="text-red-500 hover:text-red-700 transition-colors duration-200"
+                        className="text-red-500 bg-white hover:text-red-700 transition-colors duration-200"
                         aria-label="Remove item"
                       >
                         <Trash2 className="w-5 h-5" />

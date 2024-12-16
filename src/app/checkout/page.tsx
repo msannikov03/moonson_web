@@ -322,22 +322,22 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="fixed top-0 left-0 right-0 z-50 p-4 bg-white shadow-sm"
+        className="flex-wrap top-0 left-0 right-0 z-50 p-4 bg-gray-100 shadow-sm"
       >
         <div className="container mx-auto flex justify-between items-center">
           <Link
             href="/cart"
             className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
           >
-            <ArrowLeft className="w-5 h-5 mr-2" />
+            <ArrowLeft className="w-5 h-5 mr-2 text-gray-700 text-xs" />
             Обратно в корзину
           </Link>
-          <h1 className="text-2xl font-bold text-gray-900">
+        </div>
+          <h1 className="text-3xl font-bold text-gray-900 text-center mt-4">
             Оформление заказа
           </h1>
-        </div>
       </motion.header>
-      <main className="container mx-auto px-4 py-8 pt-24">
+      <main className="container mx-auto px-4 py-4">
         <div className="max-w-4xl mx-auto grid md:grid-cols-5 gap-8">
           <div className="md:col-span-3">
             <Card>
@@ -404,20 +404,21 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                   </div>
                   <div>
                     <Label>Метод отправления</Label>
+					<p className="text-gray-700 text-xs mb-4">(доставим в ближайший пункт СДЭК)</p>
                     <RadioGroup
                       defaultValue="russia"
                       onValueChange={setShippingMethod}
                       className="flex flex-col space-y-2 mt-2"
                     >
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="russia" id="russia" />
+                        <RadioGroupItem value="russia" id="russia" className="bg-white" />
                         <Label htmlFor="russia" className="flex items-center">
                           <Truck className="w-4 h-4 mr-2" />
                           Отправка по России (₽500)
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="spb" id="spb" />
+                        <RadioGroupItem value="spb" id="spb" className="bg-white" />
                         <Label htmlFor="spb" className="flex items-center">
                           <Zap className="w-4 h-4 mr-2" />
                           Отправка по СПБ и Ленинградской области (₽400)
@@ -485,39 +486,6 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                       )}
                     </div>
                   </div>
-                  <div className="mt-6">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="agreeToPolicy"
-                        checked={agreeToPolicy}
-                        onCheckedChange={(checked: boolean) =>
-                          setAgreeToPolicy(checked)
-                        }
-                      />
-                      <Label htmlFor="agreeToPolicy" className="text-sm">
-                        Я согласен с{" "}
-                        <a
-                          href="/policy.pdf"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="underline text-black"
-                        >
-                          Политикой Конфиденциальности
-                        </a>
-                      </Label>
-                    </div>
-                  </div>
-                  <Button
-                    type="submit"
-                    disabled={isProcessing || !agreeToPolicy}
-                    className={`w-full ${
-                      !agreeToPolicy ? "bg-gray-400 hover:bg-gray-400" : ""
-                    }`}
-                  >
-                    {isProcessing
-                      ? "Обработка..."
-                      : `Оплатить ₽${totalPrice.toFixed(2)}`}
-                  </Button>
                 </form>
               </CardContent>
             </Card>
@@ -582,10 +550,43 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                         : "500.00"}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center font-bold text-lg">
+                  <div className="flex justify-between items-center font-bold text-lg py-4">
                     <span>К оплате:</span>
                     <span>₽{totalPrice.toFixed(2)}</span>
                   </div>
+				  <div className="mt-6">
+                    <div className="flex items-center space-x-2 pb-4">
+                      <Checkbox
+                        id="agreeToPolicy"
+                        checked={agreeToPolicy}
+                        onCheckedChange={(checked: boolean) =>
+                          setAgreeToPolicy(checked)
+                        }
+                      />
+                      <Label htmlFor="agreeToPolicy" className="text-sm">
+                        Я согласен с{" "}
+                        <a
+                          href="/policy.pdf"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="underline text-black"
+                        >
+                          Политикой Конфиденциальности
+                        </a>
+                      </Label>
+                    </div>
+                  </div>
+                  <Button
+                    type="submit"
+                    disabled={isProcessing || !agreeToPolicy}
+                    className={`w-full ${
+                      !agreeToPolicy ? "bg-gray-400 hover:bg-gray-400" : ""
+                    }`}
+                  >
+                    {isProcessing
+                      ? "Обработка..."
+                      : `Оплатить ₽${totalPrice.toFixed(2)}`}
+                  </Button>
                 </div>
               </CardContent>
             </Card>
