@@ -162,13 +162,13 @@ export default function Home() {
             <h1 className="text-4xl sm:text-5xl font-bold text-white mr-4 jomo-font">
               Mont
             </h1>
-            <div className="w-32 h-32 bg-gray-900 rounded-full shadow-lg flex items-center justify-center mt-8">
+            <div className="logo-circle sm:w-32 sm:h-32 bg-gray-900 rounded-full shadow-lg flex items-center justify-center sm:mt-8">
               {" "}
               {/* margin to protrude the logo */}
               <img
                 src="./images/logo-black.png"
                 alt="Mont Noir"
-                className="w-24 h-24"
+                className="logo-img sm:w-24 sm:h-24"
               />
             </div>
             <h1 className="text-4xl sm:text-5xl font-bold text-white ml-4 jomo-font">
@@ -179,7 +179,7 @@ export default function Home() {
 
         <div className="absolute right-4 flex items-center">
           <Link href="/cart" className="relative">
-            <ShoppingCart className="w-12 h-12 text-gray-100" />{" "}
+            <ShoppingCart className="w-8 h-8 sm:w-12 sm:h-12 sm:mr-8 text-gray-100" />{" "}
             {/* Increased size of cart icon */}
             {cartItems.length > 0 && (
               <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
@@ -190,7 +190,7 @@ export default function Home() {
         </div>
       </motion.header>
 
-      <main className="container mx-auto px-4 py-12 pt-32">
+      <main className="container mx-auto px-4 py-12 pt-28 sm:pt-32">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

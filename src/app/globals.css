@@ -101,10 +101,15 @@ body {
   font-family: 'Roboto', sans-serif; /* Example font */
   background-color: #1a1a1a; /* Dark background */
   color: #f0f0f0; /* Light text color */
+    overflow-x: hidden;
+    width: 100vw; /* Ensure the body takes the full viewport width */
+    margin: 0; /* Remove default margin */
+    padding: 0; /* Remove default padding */
 }
 
 /* Header Styles */
 header {
+	width:100vw;
   background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent header */
 }
 
@@ -197,7 +202,7 @@ footer {
 }
 
 .relative {
-    display: flex;
+    display: flow;
     justify-content: center;
     align-items: center;
     position: relative;
@@ -208,9 +213,7 @@ footer {
   width: 100%;
   height: 100%;
   display: flex;
-  justify-content: center;
-  align-items: center;
-    animation: rotate 40s linear infinite; /* Adjust duration as needed */
+  animation: rotate 40s linear infinite; /* Adjust duration as needed */
 }
 
 #circular-text span {
@@ -242,4 +245,10 @@ footer {
 .jomo-font {
     font-family: 'Jomolhari'; 
 	letter-spacing: 2px;
+}
+
+@media (max-width: 639px) { /* Adjust the max-width as needed */
+    .logo-circle {
+        width: 60px; /* Example style for mobile screens */
+    }
 }
