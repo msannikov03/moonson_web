@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { ShoppingCart } from "lucide-react";
 import Link from "next/link";
@@ -18,6 +18,7 @@ export default function Home() {
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [flipped, setFlipped] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const circleContainerRef = useRef<HTMLDivElement>(null); // Create a ref for the circle container
 
   useEffect(() => {
     setIsLoaded(true);
@@ -42,7 +43,13 @@ export default function Home() {
 
 	useEffect(() => {
 	  const text = "кликни кликни кликни кликни кликни кликни кликни";
-	  const mainCircleRadius = 185; // Radius of the main circle
+	  const circleContainer = circleContainerRef.current; // Access the ref
+
+	  if (!circleContainer) {
+		return;
+	  }
+
+	  const mainCircleRadius = circleContainer.offsetWidth / 2 + 25; // Calculate radius based on the container's width
 	  const words = text.split(" "); // Split the text into words
 	  const wordAngle = 360 / words.length; // Angle for each word
 
@@ -80,9 +87,8 @@ export default function Home() {
 		  letterSpan.style.transformOrigin = "0 0";
 
 		  // Calculate the position of each letter along the arc
-		  const letterRotation = letterAngle * letterIndex - 90; // Adjust rotation to align letters correctly
-		  const letterRadius = mainCircleRadius; // Adjust this value to control the inner radius of the arc
-		  letterSpan.style.transform = `rotate(${letterRotation}deg) translate(${letterRadius}px) rotate(90deg)`;
+		  const letterRotation = letterAngle * letterIndex - 90;
+		  letterSpan.style.transform = `rotate(${letterRotation}deg) translate(${mainCircleRadius}px) rotate(90deg)`;
 
 		  wordDiv.appendChild(letterSpan);
 		});
@@ -90,6 +96,7 @@ export default function Home() {
 		circularTextContainer.appendChild(wordDiv);
 	  });
 	}, []);
+
   const inventoryItem = inventory.find(
     (item) => item.color === color && item.size === size
   );
@@ -234,7 +241,7 @@ export default function Home() {
               transition={{ duration: 0.5, delay: 0.8 }}
               className="relative"
             >
-              <div className="relative w-80 h-80">
+              <div id="circle-container" className="relative" ref={circleContainerRef}>
                 <div id="circular-text" className="absolute inset-0"></div>
                 <div
                   className={`circle ${flipped ? "flipped" : ""}`}

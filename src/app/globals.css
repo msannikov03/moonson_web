@@ -250,8 +250,18 @@ footer {
 	letter-spacing: 2px;
 }
 
+#circle-container{
+	width: 20rem;
+	height: 20rem;
+}
+
 @media (max-width: 639px) { /* Adjust the max-width as needed */
     .logo-circle {
         width: 60px; /* Example style for mobile screens */
     }
+	
+	#circle-container{
+		width: 18rem;
+		height: 18rem;
+	}
 }
