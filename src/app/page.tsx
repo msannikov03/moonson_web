@@ -40,32 +40,56 @@ export default function Home() {
     setIsExpanded(!isExpanded);
   };
 
-  useEffect(() => {
-    const text = "кликни кликни кликни кликни кликни кликни кликни ";
-    const radius = 185; // Adjust the radius as needed
-    const letters = text.split("");
-    const angle = 360 / letters.length;
+	useEffect(() => {
+	  const text = "кликни кликни кликни кликни кликни кликни кликни";
+	  const mainCircleRadius = 185; // Radius of the main circle
+	  const words = text.split(" "); // Split the text into words
+	  const wordAngle = 360 / words.length; // Angle for each word
 
-    const circularTextContainer = document.getElementById("circular-text");
-    if (!circularTextContainer) {
-      return;
-    }
-    circularTextContainer.innerHTML = ""; // Clear previous content
+	  const circularTextContainer = document.getElementById("circular-text");
+	  if (!circularTextContainer) {
+		return;
+	  }
+	  circularTextContainer.innerHTML = ""; // Clear previous content
 
-    letters.forEach((letter, index) => {
-      const span = document.createElement("span");
-      span.innerText = letter;
-      span.style.position = "absolute";
-      span.style.left = "50%";
-      span.style.top = "50%";
-      span.style.transformOrigin = "0 0";
-      const rotation = angle * index; // Calculate rotation for each letter
-      const adjustedRotation = rotation - 90; // Adjust rotation to point bottom of letter to center
-      span.style.transform = `rotate(${adjustedRotation}deg) translate(${radius}px) rotate(${90}deg)`;
-      circularTextContainer.appendChild(span);
-    });
-  }, []);
+	  words.forEach((word, index) => {
+		const wordDiv = document.createElement("div");
+		wordDiv.style.position = "absolute";
+		wordDiv.style.left = "50%";
+		wordDiv.style.top = "50%";
+		wordDiv.style.transformOrigin = "0 0"; // Set the origin for rotation
+		const wordRotation = wordAngle * index + 90; // Calculate rotation for each word
+		wordDiv.style.transform = `rotate(${wordRotation}deg)`;
 
+		// Add the infinite rotation animation with a unique starting position
+		const animationDelay = (-wordRotation / 360) * 40; // Calculate delay based on wordRotation
+		wordDiv.style.animation = `rotate 40s linear infinite`;
+		wordDiv.style.animationDelay = `${animationDelay}s`; // Apply the delay
+
+		// Split the word into individual letters
+		const letters = word.split("");
+		letters.push(" ");
+		const letterAngle = wordAngle / letters.length; // Angle between each letter
+
+		letters.forEach((letter, letterIndex) => {
+		  const letterSpan = document.createElement("span");
+		  letterSpan.innerText = letter;
+		  letterSpan.style.position = "absolute";
+		  letterSpan.style.left = "50%";
+		  letterSpan.style.top = "50%";
+		  letterSpan.style.transformOrigin = "0 0";
+
+		  // Calculate the position of each letter along the arc
+		  const letterRotation = letterAngle * letterIndex - 90; // Adjust rotation to align letters correctly
+		  const letterRadius = mainCircleRadius; // Adjust this value to control the inner radius of the arc
+		  letterSpan.style.transform = `rotate(${letterRotation}deg) translate(${letterRadius}px) rotate(90deg)`;
+
+		  wordDiv.appendChild(letterSpan);
+		});
+
+		circularTextContainer.appendChild(wordDiv);
+	  });
+	}, []);
   const inventoryItem = inventory.find(
     (item) => item.color === color && item.size === size
   );
@@ -211,7 +235,7 @@ export default function Home() {
               className="relative"
             >
               <div className="relative w-80 h-80">
-                <div id="circular-text"></div>
+                <div id="circular-text" className="absolute inset-0"></div>
                 <div
                   className={`circle ${flipped ? "flipped" : ""}`}
                   onClick={handleCircleClick}
