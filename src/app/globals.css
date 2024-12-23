@@ -107,6 +107,16 @@ body {
     padding: 0; /* Remove default padding */
 }
 
+main.container:has(.interact) {
+  padding-top: 2rem;
+  --tw-bg-opacity: 1;
+    background-color: rgb(249 250 251 / var(--tw-bg-opacity));
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
 /* Header Styles */
 header {
 	width:100vw;
