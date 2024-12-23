@@ -208,9 +208,9 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="absolute right-4 flex items-center">
+        <div className="absolute right-4 flex items-center sm:mr-8">
           <Link href="/cart" className="relative">
-            <ShoppingCart className="w-8 h-8 sm:w-12 sm:h-12 sm:mr-8 text-gray-100" />{" "}
+            <ShoppingCart className="w-8 h-8 sm:w-12 sm:h-12 text-gray-100" />{" "}
             {/* Increased size of cart icon */}
             {cartItems.length > 0 && (
               <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
@@ -429,8 +429,7 @@ export default function Home() {
               </div>
               {inventoryItem && (
                 <p className="text-sm text-gray-500 mt-2">
-                  В наличии: {inventoryItem.quantity} шт., доступно:{" "}
-                  {maxAvailableQuantitySafe} шт.
+                  В наличии: {maxAvailableQuantitySafe} шт.
                 </p>
               )}
             </div>

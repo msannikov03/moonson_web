@@ -5,10 +5,13 @@ import Providers from '../components/Providers'
 const inter = Inter({ subsets: ['latin'], display: 'swap', adjustFontFallback: false})
 
 export const metadata = {
-  title: 'Your App Title',
-  description: 'Your App Description',
+  title: 'Mont Noir — Wear Your Thoughts',
+  description: 'Мы - Mont Noir, бренд, который превращает ваши мысли в реальность. Мы с гордостью представляем эксклюзивную коллекцию футболок, разработанную с учетом вашего комфорта и предпочтений.',
   icons: {
-    icon: '/favicon.ico',
+    icon: [
+      { url: '/favicon.ico', media: '(prefers-color-scheme: light)' },
+      { url: '/favicon-dark.ico', media: '(prefers-color-scheme: dark)' },
+    ],
     shortcut: '/favicon.ico',
     apple: '/apple-touch-icon.png',
   },
