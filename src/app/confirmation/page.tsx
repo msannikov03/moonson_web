@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function OrderConfirmation() {
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+    <div className="bg-gray-50 flex items-center justify-center">
       <Card className="w-full max-w-lg">
         <CardHeader>
           <motion.div
@@ -25,7 +25,7 @@ export default function OrderConfirmation() {
           <p>Спасибо за покупку. Ваш заказ был успешно оформлен.</p>
           <p>Детали вашего заказа были направлены на адрес электронной почты.</p>
           <Button asChild>
-            <Link href="/">На домашнюю страницу</Link>
+            <Link href="/">На главную</Link>
           </Button>
         </CardContent>
       </Card>

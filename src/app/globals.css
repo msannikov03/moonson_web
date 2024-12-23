@@ -108,6 +108,7 @@ body {
 }
 
 main.container:has(.interact) {
+  max-width: none;
   padding-top: 2rem;
   --tw-bg-opacity: 1;
     background-color: rgb(249 250 251 / var(--tw-bg-opacity));
