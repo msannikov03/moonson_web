@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { ShoppingCart } from "lucide-react";
 import Link from "next/link";
@@ -18,6 +18,7 @@ export default function Home() {
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [flipped, setFlipped] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const circleContainerRef = useRef<HTMLDivElement>(null); // Create a ref for the circle container
 
   useEffect(() => {
     setIsLoaded(true);
@@ -40,31 +41,61 @@ export default function Home() {
     setIsExpanded(!isExpanded);
   };
 
-  useEffect(() => {
-    const text = "кликни кликни кликни кликни кликни кликни кликни ";
-    const radius = 185; // Adjust the radius as needed
-    const letters = text.split("");
-    const angle = 360 / letters.length;
+	useEffect(() => {
+	  const text = "кликни кликни кликни кликни кликни кликни кликни";
+	  const circleContainer = circleContainerRef.current; // Access the ref
 
-    const circularTextContainer = document.getElementById("circular-text");
-    if (!circularTextContainer) {
-      return;
-    }
-    circularTextContainer.innerHTML = ""; // Clear previous content
+	  if (!circleContainer) {
+		return;
+	  }
 
-    letters.forEach((letter, index) => {
-      const span = document.createElement("span");
-      span.innerText = letter;
-      span.style.position = "absolute";
-      span.style.left = "50%";
-      span.style.top = "50%";
-      span.style.transformOrigin = "0 0";
-      const rotation = angle * index; // Calculate rotation for each letter
-      const adjustedRotation = rotation - 90; // Adjust rotation to point bottom of letter to center
-      span.style.transform = `rotate(${adjustedRotation}deg) translate(${radius}px) rotate(${90}deg)`;
-      circularTextContainer.appendChild(span);
-    });
-  }, []);
+	  const mainCircleRadius = circleContainer.offsetWidth / 2 + 25; // Calculate radius based on the container's width
+	  const words = text.split(" "); // Split the text into words
+	  const wordAngle = 360 / words.length; // Angle for each word
+
+	  const circularTextContainer = document.getElementById("circular-text");
+	  if (!circularTextContainer) {
+		return;
+	  }
+	  circularTextContainer.innerHTML = ""; // Clear previous content
+
+	  words.forEach((word, index) => {
+		const wordDiv = document.createElement("div");
+		wordDiv.style.position = "absolute";
+		wordDiv.style.left = "50%";
+		wordDiv.style.top = "50%";
+		wordDiv.style.transformOrigin = "0 0"; // Set the origin for rotation
+		const wordRotation = wordAngle * index + 90; // Calculate rotation for each word
+		wordDiv.style.transform = `rotate(${wordRotation}deg)`;
+
+		// Add the infinite rotation animation with a unique starting position
+		const animationDelay = (-wordRotation / 360) * 40; // Calculate delay based on wordRotation
+		wordDiv.style.animation = `rotate 40s linear infinite`;
+		wordDiv.style.animationDelay = `${animationDelay}s`; // Apply the delay
+
+		// Split the word into individual letters
+		const letters = word.split("");
+		letters.push(" ");
+		const letterAngle = wordAngle / letters.length; // Angle between each letter
+
+		letters.forEach((letter, letterIndex) => {
+		  const letterSpan = document.createElement("span");
+		  letterSpan.innerText = letter;
+		  letterSpan.style.position = "absolute";
+		  letterSpan.style.left = "50%";
+		  letterSpan.style.top = "50%";
+		  letterSpan.style.transformOrigin = "0 0";
+
+		  // Calculate the position of each letter along the arc
+		  const letterRotation = letterAngle * letterIndex - 90;
+		  letterSpan.style.transform = `rotate(${letterRotation}deg) translate(${mainCircleRadius}px) rotate(90deg)`;
+
+		  wordDiv.appendChild(letterSpan);
+		});
+
+		circularTextContainer.appendChild(wordDiv);
+	  });
+	}, []);
 
   const inventoryItem = inventory.find(
     (item) => item.color === color && item.size === size
@@ -210,8 +241,8 @@ export default function Home() {
               transition={{ duration: 0.5, delay: 0.8 }}
               className="relative"
             >
-              <div className="relative w-80 h-80">
-                <div id="circular-text"></div>
+              <div id="circle-container" className="relative" ref={circleContainerRef}>
+                <div id="circular-text" className="absolute inset-0"></div>
                 <div
                   className={`circle ${flipped ? "flipped" : ""}`}
                   onClick={handleCircleClick}
@@ -311,15 +342,11 @@ export default function Home() {
             className="max-w-md w-full mx-auto md:mx-0"
           >
             <p className="text-lg mb-6">
-              Разработанные и произведенные с любовью в России, эти футболки
-              предлагают вам индивидуальный дизайн и невероятный опыт ношения,
-              благодаря высококачественной ткани и тщательно разработанным
-              кроем. невероятно мягка и нежна к коже, обеспечивая свободу
-              движений и комфорт на протяжении всего дня.
+              Наша футболка — это не просто вещь в гардеробе. Это — идеальный баланс между комфортом и стилем. Никакой лишней навороченности, только качественная ткань, удобный крой и сдержанный стиль, который не кричит о себе. Идеальный выбор для тех, кто ценит комфорт без компромиссов.
             </p>
             <ul className="list-disc list-inside space-y-2 mb-6">
               <li>95% чистый хлопок, 5% изысканная лайкра</li>
-              <li>Невероятно мягкая и нежная ткань</li>
+              <li>Невероятно мягкая, но плотная ткань</li>
               <li>Гарантирует свободу движений и максимальный комфорт</li>
               <li>Разработаны и произведены в России</li>
               <li>Доставка от 3 рабочих дней</li>

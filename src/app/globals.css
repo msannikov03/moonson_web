@@ -190,6 +190,35 @@ footer {
     transform: rotateY(0deg); /* Show the back */
 }
 
+#circular-text {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#circular-text div {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform-origin: 0 0; /* Set the origin for rotation */
+  font-size: 16px; /* Adjust font size as needed */
+  color: white; /* Text color */
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 .text-wrap {
   position: absolute;
   top: 50%;
@@ -208,32 +237,6 @@ footer {
     position: relative;
 }
 
-#circular-text {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  animation: rotate 40s linear infinite; /* Adjust duration as needed */
-}
-
-#circular-text span {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform-origin: 0 0; /* Set the origin for rotation */
-  font-size: 16px; /* Adjust font size as needed */
-  color: white; /* Text color */
-}
-
-@keyframes rotate {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-}
-
 @font-face {
     font-family: 'Jomolhari';
     src: url('/fonts/Jomolhari.ttf') format('ttf');
@@ -247,8 +250,18 @@ footer {
 	letter-spacing: 2px;
 }
 
+#circle-container{
+	width: 20rem;
+	height: 20rem;
+}
+
 @media (max-width: 639px) { /* Adjust the max-width as needed */
     .logo-circle {
         width: 60px; /* Example style for mobile screens */
     }
+	
+	#circle-container{
+		width: 18rem;
+		height: 18rem;
+	}
 }
