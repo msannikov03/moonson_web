@@ -64,6 +64,7 @@ export default function Checkout() {
   const [freeShipping, setFreeShipping] = useState(false);
   const [promoError, setPromoError] = useState("");
 
+  // Load Tinkoff script
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://securepay.tinkoff.ru/html/payForm/js/tinkoff_v2.js";
@@ -81,6 +82,7 @@ export default function Checkout() {
     };
   }, []);
 
+  // Calculate subtotal / total every time cart, discount, or shipping changes
   useEffect(() => {
     const shippingCost = freeShipping
       ? 0
@@ -93,12 +95,14 @@ export default function Checkout() {
     );
 
     const calculatedDiscount = (calculatedSubtotal * discount) / 100;
-    const newTotalPrice = calculatedSubtotal - calculatedDiscount + shippingCost;
+    const newTotalPrice =
+      calculatedSubtotal - calculatedDiscount + shippingCost;
 
     setSubtotal(calculatedSubtotal);
     setTotalPrice(newTotalPrice);
   }, [cartItems, shippingMethod, discount, freeShipping]);
 
+  // Apply promo code
   const handleApplyPromo = async () => {
     const code = currentPromoCode.trim();
 
@@ -121,16 +125,16 @@ export default function Checkout() {
       const response = await fetch("/api/promocodes", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ codes: [code] })
+        body: JSON.stringify({ codes: [code] }),
       });
 
       const data = await response.json();
 
       if (response.ok && data.valid) {
         setPromoCodes([...promoCodes, code.toLowerCase()]);
-        setDiscount(prev => prev + data.totalDiscountPercent);
+        setDiscount((prev) => prev + data.totalDiscountPercent);
         if (data.freeShipping) {
           setFreeShipping(true);
         }
@@ -145,8 +149,11 @@ export default function Checkout() {
     }
   };
 
+  // Remove promo code
   const handleRemovePromoCode = async (codeToRemove: string) => {
-    const updatedPromoCodes = promoCodes.filter(code => code !== codeToRemove.toLowerCase());
+    const updatedPromoCodes = promoCodes.filter(
+      (code) => code !== codeToRemove.toLowerCase()
+    );
     setPromoCodes(updatedPromoCodes);
 
     if (updatedPromoCodes.length === 0) {
@@ -160,9 +167,9 @@ export default function Checkout() {
       const response = await fetch("/api/promocodes", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ codes: updatedPromoCodes })
+        body: JSON.stringify({ codes: updatedPromoCodes }),
       });
 
       const data = await response.json();
@@ -181,11 +188,47 @@ export default function Checkout() {
     }
   };
 
+  // The main form submission handler
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsProcessing(true);
 
     try {
+      // ---------------------------------------------------------------------
+      // 1) Insert the order into DB (status = "pending")
+      // ---------------------------------------------------------------------
+      const dbPayload = {
+        firstName,
+        lastName,
+        email,
+        phone,
+        address,
+        shippingMethod,
+        cartItems, // We'll store these in "items" JSON field
+        subtotal,
+        totalPrice,
+      };
+
+      const dbResponse = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dbPayload),
+      });
+
+      const dbData = await dbResponse.json();
+      if (!dbData.success) {
+        // If we can't create the order in DB, stop and show error
+        alert("Ошибка создания заказа: " + dbData.error);
+        setIsProcessing(false);
+        return;
+      }
+
+      // dbData.order is the new row with status = "pending"
+      // console.log("DB order created:", dbData.order);
+
+      // ---------------------------------------------------------------------
+      // 2) Proceed with the Tinkoff payment logic
+      // ---------------------------------------------------------------------
       if (!payLoaded || typeof window.pay !== "function") {
         alert("Скрипт оплаты не загружен. Пожалуйста, попробуйте позже.");
         setIsProcessing(false);
@@ -202,6 +245,7 @@ export default function Checkout() {
       const calculatedDiscount = (subtotal * discount) / 100;
       const discountedSubtotal = subtotal - calculatedDiscount;
 
+      // Add shipping as a separate "item" for Tinkoff
       const cartItemsWithShipping: CartItemWithShipping[] = [
         ...cartItems,
         {
@@ -225,6 +269,7 @@ export default function Checkout() {
         let measurementUnit: string;
 
         if ("name" in item) {
+          // Shipping item
           priceInKopeks = Math.round(item.price * 100);
           amountInKopeks = priceInKopeks * item.quantity;
           itemName = item.name;
@@ -232,6 +277,7 @@ export default function Checkout() {
           tax = "none";
           measurementUnit = "шт";
         } else {
+          // T-Shirt item
           const productPrice = 3400 * (1 - discount / 100);
           priceInKopeks = Math.round(productPrice * 100);
           amountInKopeks = priceInKopeks * item.quantity;
@@ -269,6 +315,7 @@ export default function Checkout() {
       const returnUrl = `${process.env.NEXT_PUBLIC_YOUR_DOMAIN}/confirmation?order=${orderNumber}`;
       const failUrl = `${process.env.NEXT_PUBLIC_YOUR_DOMAIN}/checkout?error=payment_failed`;
 
+      // Tinkoff payload
       const TPF = {
         terminalkey: process.env.NEXT_PUBLIC_TINKOFF_TERMINAL_KEY || "",
         frame: "false",
@@ -284,14 +331,18 @@ export default function Checkout() {
         FailURL: failUrl,
       };
 
+      // Validate the amounts
       const parsedAmount = parseFloat(TPF.amount);
       const expectedAmount = discountedSubtotal + shippingCost;
       if (Math.abs(parsedAmount - expectedAmount) > 0.01) {
-        alert("Произошла ошибка при обработке вашего платежа. Пожалуйста, попробуйте еще раз.");
+        alert(
+          "Произошла ошибка при обработке вашего платежа. Пожалуйста, попробуйте еще раз."
+        );
         setIsProcessing(false);
         return;
       }
 
+      // Create a hidden form for Tinkoff
       const form = document.createElement("form");
       form.id = "payform-tbank";
 
@@ -305,6 +356,8 @@ export default function Checkout() {
 
       document.body.appendChild(form);
       console.log("Payment Form:", form);
+
+      // Launch Tinkoff payment
       window.pay(form);
     } catch (error: any) {
       alert("Произошла ошибка при обработке вашего платежа: " + error.message);
@@ -315,17 +368,27 @@ export default function Checkout() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 interact">
-        <div className="max-w-7xl mx-auto flex justify-start items-center">
+    <div className="min-h-screen bg-gray-50">
+      <motion.header
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="flex-wrap top-0 left-0 right-0 z-50 p-4 bg-gray-100 shadow-sm"
+      >
+        <div className="container mx-auto flex justify-between items-center">
           <Link
             href="/cart"
-            className="flex items-center text-gray-600 hover:text-gray-900 transition-colors px-4 py-2 bg-gray-200 rounded-md"
+            className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
           >
             <ArrowLeft className="w-5 h-5 mr-2 text-gray-700 text-xs" />
             Обратно в корзину
           </Link>
         </div>
-      <main className="container mx-auto px-4 pt-4">
+        <h1 className="text-3xl font-bold text-gray-900 text-center mt-4">
+          Оформление заказа
+        </h1>
+      </motion.header>
+      <main className="container mx-auto px-4 py-4">
         <div className="max-w-4xl mx-auto grid md:grid-cols-5 gap-8">
           <div className="md:col-span-3">
             <Card>
@@ -392,21 +455,31 @@ export default function Checkout() {
                   </div>
                   <div>
                     <Label>Метод отправления</Label>
-					<p className="text-gray-700 text-xs mb-4">(доставим в ближайший пункт СДЭК)</p>
+                    <p className="text-gray-700 text-xs mb-4">
+                      (доставим в ближайший пункт СДЭК)
+                    </p>
                     <RadioGroup
                       defaultValue="russia"
                       onValueChange={setShippingMethod}
                       className="flex flex-col space-y-2 mt-2"
                     >
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="russia" id="russia" className="bg-white" />
+                        <RadioGroupItem
+                          value="russia"
+                          id="russia"
+                          className="bg-white"
+                        />
                         <Label htmlFor="russia" className="flex items-center">
                           <Truck className="w-4 h-4 mr-2" />
                           Отправка по России (₽500)
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="spb" id="spb" className="bg-white" />
+                        <RadioGroupItem
+                          value="spb"
+                          id="spb"
+                          className="bg-white"
+                        />
                         <Label htmlFor="spb" className="flex items-center">
                           <Zap className="w-4 h-4 mr-2" />
                           Отправка по СПБ и Ленинградской области (₽400)
@@ -428,7 +501,10 @@ export default function Checkout() {
                         <Button
                           type="button"
                           onClick={handleApplyPromo}
-                          disabled={currentPromoCode.trim() === "" || promoCodes.length >= 2}
+                          disabled={
+                            currentPromoCode.trim() === "" ||
+                            promoCodes.length >= 2
+                          }
                         >
                           Применить
                         </Button>
@@ -474,10 +550,14 @@ export default function Checkout() {
                       )}
                     </div>
                   </div>
+                  {/* Submit Button is outside this form (in the second card)? 
+                      If that's the case, you can move it here or keep it separate. */}
                 </form>
               </CardContent>
             </Card>
           </div>
+
+          {/* SECOND CARD: ORDER SUMMARY + FINAL SUBMIT BUTTON */}
           <div className="md:col-span-2">
             <Card>
               <CardHeader>
@@ -542,7 +622,7 @@ export default function Checkout() {
                     <span>К оплате:</span>
                     <span>₽{totalPrice.toFixed(2)}</span>
                   </div>
-				  <div className="mt-6">
+                  <div className="mt-6">
                     <div className="flex items-center space-x-2 pb-4">
                       <Checkbox
                         id="agreeToPolicy"
@@ -564,17 +644,23 @@ export default function Checkout() {
                       </Label>
                     </div>
                   </div>
-                  <Button
-                    type="submit"
-                    disabled={isProcessing || !agreeToPolicy}
-                    className={`w-full ${
-                      !agreeToPolicy ? "bg-gray-400 hover:bg-gray-400" : ""
-                    }`}
-                  >
-                    {isProcessing
-                      ? "Обработка..."
-                      : `Оплатить ₽${totalPrice.toFixed(2)}`}
-                  </Button>
+                  {/* IMPORTANT: We wrap the final payment button in a <form onSubmit={...}> 
+                      But in your code, you had the <form> in the first card. 
+                      Make sure you don't have nested forms. For simplicity,
+                      let's just keep it here: */}
+                  <form onSubmit={handleSubmit}>
+                    <Button
+                      type="submit"
+                      disabled={isProcessing || !agreeToPolicy}
+                      className={`w-full ${
+                        !agreeToPolicy ? "bg-gray-400 hover:bg-gray-400" : ""
+                      }`}
+                    >
+                      {isProcessing
+                        ? "Обработка..."
+                        : `Оплатить ₽${totalPrice.toFixed(2)}`}
+                    </Button>
+                  </form>
                 </div>
               </CardContent>
             </Card>

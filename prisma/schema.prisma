@@ -1,0 +1,26 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Order {
+  id          String   @id @default(uuid())
+  orderNumber String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  firstName   String
+  lastName    String
+  email       String
+  phone       String
+  address     String
+  shippingMethod String
+  items       Json
+  subtotal    Float
+  total       Float
+  status      String
+}
