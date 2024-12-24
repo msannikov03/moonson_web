@@ -12,12 +12,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 declare global {
   interface Window {
@@ -64,7 +59,14 @@ export default function Checkout() {
   const [freeShipping, setFreeShipping] = useState(false);
   const [promoError, setPromoError] = useState("");
 
-  // Load Tinkoff script
+  // ADDED: Simple client-side validators
+  function isEmailValid(email: string) {
+    return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email);
+  }
+  function isPhoneValid(phone: string) {
+    return /^\+?\d{7,15}$/.test(phone);
+  }
+
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://securepay.tinkoff.ru/html/payForm/js/tinkoff_v2.js";
@@ -82,7 +84,6 @@ export default function Checkout() {
     };
   }, []);
 
-  // Calculate subtotal / total every time cart, discount, or shipping changes
   useEffect(() => {
     const shippingCost = freeShipping
       ? 0
@@ -102,7 +103,6 @@ export default function Checkout() {
     setTotalPrice(newTotalPrice);
   }, [cartItems, shippingMethod, discount, freeShipping]);
 
-  // Apply promo code
   const handleApplyPromo = async () => {
     const code = currentPromoCode.trim();
 
@@ -149,10 +149,9 @@ export default function Checkout() {
     }
   };
 
-  // Remove promo code
   const handleRemovePromoCode = async (codeToRemove: string) => {
     const updatedPromoCodes = promoCodes.filter(
-      (code) => code !== codeToRemove.toLowerCase()
+      (c) => c !== codeToRemove.toLowerCase()
     );
     setPromoCodes(updatedPromoCodes);
 
@@ -188,25 +187,36 @@ export default function Checkout() {
     }
   };
 
-  // The main form submission handler
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsProcessing(true);
 
     try {
-      // ---------------------------------------------------------------------
-      // 1) Insert the order into DB (status = "pending")
-      // ---------------------------------------------------------------------
+      if (!isEmailValid(email)) {
+        alert("Неверный формат email");
+        setIsProcessing(false);
+        return;
+      }
+      if (!isPhoneValid(phone)) {
+        alert("Неверный формат телефона");
+        setIsProcessing(false);
+        return;
+      }
+
+      const newOrderNumber = "Order" + Date.now();
+
       const dbPayload = {
+        orderNumber: newOrderNumber,
         firstName,
         lastName,
         email,
         phone,
         address,
         shippingMethod,
-        cartItems, // We'll store these in "items" JSON field
+        cartItems,
         subtotal,
         totalPrice,
+        coupons: promoCodes,
       };
 
       const dbResponse = await fetch("/api/checkout", {
@@ -217,26 +227,17 @@ export default function Checkout() {
 
       const dbData = await dbResponse.json();
       if (!dbData.success) {
-        // If we can't create the order in DB, stop and show error
         alert("Ошибка создания заказа: " + dbData.error);
         setIsProcessing(false);
         return;
       }
 
-      // dbData.order is the new row with status = "pending"
-      // console.log("DB order created:", dbData.order);
-
-      // ---------------------------------------------------------------------
-      // 2) Proceed with the Tinkoff payment logic
-      // ---------------------------------------------------------------------
       if (!payLoaded || typeof window.pay !== "function") {
         alert("Скрипт оплаты не загружен. Пожалуйста, попробуйте позже.");
         setIsProcessing(false);
         return;
       }
 
-      const orderNumber = "Order" + Date.now();
-      const fullName = `${firstName} ${lastName}`;
       const shippingCost = freeShipping
         ? 0
         : shippingMethod === "spb"
@@ -245,7 +246,6 @@ export default function Checkout() {
       const calculatedDiscount = (subtotal * discount) / 100;
       const discountedSubtotal = subtotal - calculatedDiscount;
 
-      // Add shipping as a separate "item" for Tinkoff
       const cartItemsWithShipping: CartItemWithShipping[] = [
         ...cartItems,
         {
@@ -265,11 +265,10 @@ export default function Checkout() {
         let amountInKopeks: number;
         let itemName: string;
         let paymentObject: string;
-        let tax: string;
-        let measurementUnit: string;
+        let tax = "none";
+        let measurementUnit = "шт";
 
         if ("name" in item) {
-          // Shipping item
           priceInKopeks = Math.round(item.price * 100);
           amountInKopeks = priceInKopeks * item.quantity;
           itemName = item.name;
@@ -277,7 +276,6 @@ export default function Checkout() {
           tax = "none";
           measurementUnit = "шт";
         } else {
-          // T-Shirt item
           const productPrice = 3400 * (1 - discount / 100);
           priceInKopeks = Math.round(productPrice * 100);
           amountInKopeks = priceInKopeks * item.quantity;
@@ -312,10 +310,11 @@ export default function Checkout() {
 
       const receiptJson = JSON.stringify(Receipt);
 
+      const orderNumber = newOrderNumber;
+      const fullName = `${firstName} ${lastName}`;
       const returnUrl = `${process.env.NEXT_PUBLIC_YOUR_DOMAIN}/confirmation?order=${orderNumber}`;
       const failUrl = `${process.env.NEXT_PUBLIC_YOUR_DOMAIN}/checkout?error=payment_failed`;
 
-      // Tinkoff payload
       const TPF = {
         terminalkey: process.env.NEXT_PUBLIC_TINKOFF_TERMINAL_KEY || "",
         frame: "false",
@@ -331,7 +330,6 @@ export default function Checkout() {
         FailURL: failUrl,
       };
 
-      // Validate the amounts
       const parsedAmount = parseFloat(TPF.amount);
       const expectedAmount = discountedSubtotal + shippingCost;
       if (Math.abs(parsedAmount - expectedAmount) > 0.01) {
@@ -342,7 +340,6 @@ export default function Checkout() {
         return;
       }
 
-      // Create a hidden form for Tinkoff
       const form = document.createElement("form");
       form.id = "payform-tbank";
 
@@ -357,7 +354,6 @@ export default function Checkout() {
       document.body.appendChild(form);
       console.log("Payment Form:", form);
 
-      // Launch Tinkoff payment
       window.pay(form);
     } catch (error: any) {
       alert("Произошла ошибка при обработке вашего платежа: " + error.message);
@@ -430,6 +426,7 @@ export default function Checkout() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
+                      pattern="^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$"
                     />
                   </div>
                   <div>
@@ -441,6 +438,7 @@ export default function Checkout() {
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       required
+                      pattern="^\+?\d{7,15}$"
                     />
                   </div>
                   <div>
@@ -513,15 +511,17 @@ export default function Checkout() {
                         {promoCodes.map((code, index) => (
                           <div
                             key={index}
-                            className="flex items-center bg-gray-200 text-gray-800 px-3 py-1 rounded-full"
+                            className="flex items-centerbg-blue-100 text-blue-800 font-medium px-3 py-1 rounded-full shadow-sm mr-2 mb-2"
                           >
-                            <span>{code.toUpperCase()}</span>
+                            <span className="text-sm">
+                              {code.toUpperCase()}
+                            </span>
                             <button
                               type="button"
                               onClick={() => handleRemovePromoCode(code)}
-                              className="ml-2 text-red-500 hover:text-red-700"
+                              className="ml-2 text-blue-600 hover:text-blue-900 bg-transparent p-0 border-none focus:outline-none focus:ring-0 appearance-none"
                             >
-                              &times;
+                              ✕
                             </button>
                           </div>
                         ))}
@@ -550,14 +550,11 @@ export default function Checkout() {
                       )}
                     </div>
                   </div>
-                  {/* Submit Button is outside this form (in the second card)? 
-                      If that's the case, you can move it here or keep it separate. */}
                 </form>
               </CardContent>
             </Card>
           </div>
 
-          {/* SECOND CARD: ORDER SUMMARY + FINAL SUBMIT BUTTON */}
           <div className="md:col-span-2">
             <Card>
               <CardHeader>
@@ -644,10 +641,6 @@ export default function Checkout() {
                       </Label>
                     </div>
                   </div>
-                  {/* IMPORTANT: We wrap the final payment button in a <form onSubmit={...}> 
-                      But in your code, you had the <form> in the first card. 
-                      Make sure you don't have nested forms. For simplicity,
-                      let's just keep it here: */}
                   <form onSubmit={handleSubmit}>
                     <Button
                       type="submit"

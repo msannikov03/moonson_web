@@ -23,4 +23,5 @@ model Order {
   subtotal    Float
   total       Float
   status      String
+  coupons Json?
 }
