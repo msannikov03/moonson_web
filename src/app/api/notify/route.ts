@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
         orderNumber: OrderId,
       },
       data: {
-        status: newStatus,
+        status: newStatus.toUpperCase(),
         updatedAt: new Date(),
       },
     });
