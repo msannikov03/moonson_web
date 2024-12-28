@@ -91,7 +91,7 @@ export default function Checkout() {
       ? 400
       : 500;
     const calculatedSubtotal = cartItems.reduce(
-      (total, item) => total + item.quantity * 3400,
+      (total, item) => total + item.quantity * 3500,
       0
     );
 
@@ -276,7 +276,7 @@ export default function Checkout() {
           tax = "none";
           measurementUnit = "шт";
         } else {
-          const productPrice = 3400 * (1 - discount / 100);
+          const productPrice = 3500 * (1 - discount / 100);
           priceInKopeks = Math.round(productPrice * 100);
           amountInKopeks = priceInKopeks * item.quantity;
           itemName = `Overthinker's Delight T-Shirt (${item.color}, ${item.size})`;
@@ -561,7 +561,7 @@ export default function Checkout() {
                         {item.quantity}x Overthinker&apos;s Delight T-Shirt (
                         {item.color}, {item.size})
                       </span>
-                      <span>₽{(item.quantity * 3400).toFixed(2)}</span>
+                      <span>₽{(item.quantity * 3500).toFixed(2)}</span>
                     </div>
                   ))}
                   <div className="flex justify-between items-center text-sm">

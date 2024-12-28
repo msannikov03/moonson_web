@@ -28,7 +28,7 @@ export default function Cart() {
   }, []);
 
   const totalPrice = cartItems.reduce(
-    (total, item) => total + item.quantity * 3400,
+    (total, item) => total + item.quantity * 3500,
     0
   );
 
@@ -116,7 +116,7 @@ export default function Cart() {
                       </button>
                     </div>
                     <p className="font-bold">
-                      ₽{(item.quantity * 3400).toFixed(2)}
+                      ₽{(item.quantity * 3500).toFixed(2)}
                     </p>
                     <button
                       onClick={() => removeFromCart(index)}
