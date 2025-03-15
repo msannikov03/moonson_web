@@ -440,7 +440,7 @@ export default function Home() {
             >
               {maxAvailableQuantitySafe <= 0
                 ? "Нет в наличии"
-                : "Переосмыслить эту покупку"}
+                : "Переосмыслить эту покупку ₽3500"}
               {maxAvailableQuantitySafe > 0 && (
                 <ShoppingCart className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
               )}
